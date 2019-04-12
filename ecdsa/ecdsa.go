@@ -23,10 +23,10 @@ import (
 	"crypto/sha512"
 	"encoding/asn1"
 	"errors"
-	"github.com/insolar/x-crypto/elliptic"
 	"io"
 	"math/big"
 
+	"github.com/insolar/x-crypto/elliptic"
 	"github.com/insolar/x-crypto/randutil"
 )
 
