@@ -1,4 +1,4 @@
-# xcrypto
+# X-CRYPTO 
 
-Library with the implementation of the ECDSA curve secp256k1
-it needs for support Ethereum cryptography 
+This is a copy of the standard crypto library with the implementation of the ECDSA curve secp256k1
+
