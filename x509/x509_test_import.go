@@ -10,10 +10,10 @@
 package x509
 
 import (
-	"crypto/rand"
-	"crypto/x509"
-	"crypto/x509/pkix"
 	"encoding/pem"
+	"github.com/insolar/x-crypto/rand"
+	"github.com/insolar/x-crypto/x509"
+	"github.com/insolar/x-crypto/x509/pkix"
 	"math/big"
 	"time"
 )

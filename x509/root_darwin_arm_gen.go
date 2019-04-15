@@ -18,12 +18,12 @@ package x509
 
 import (
 	"bytes"
-	"crypto/sha256"
-	"crypto/x509"
 	"encoding/hex"
 	"encoding/pem"
 	"flag"
 	"fmt"
+	"github.com/insolar/x-crypto/sha256"
+	"github.com/insolar/x-crypto/x509"
 	"go/format"
 	"io/ioutil"
 	"log"

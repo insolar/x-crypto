@@ -9,9 +9,9 @@ package x509
 import (
 	"bufio"
 	"bytes"
-	"crypto/sha1"
 	"encoding/pem"
 	"fmt"
+	"github.com/insolar/x-crypto/sha1"
 	"io"
 	"io/ioutil"
 	"os"
