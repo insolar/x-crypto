@@ -4,6 +4,8 @@
 
 package des_test
 
+import "github.com/insolar/x-crypto/des"
+
 func ExampleNewTripleDESCipher() {
 	// NewTripleDESCipher can also be used when EDE2 is required by
 	// duplicating the first 8 bytes of the 16-byte key.

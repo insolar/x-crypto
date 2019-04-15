@@ -7,7 +7,7 @@
 package elliptic
 
 import (
-	subtle "github.com/insolar/x-crypto"
+	"github.com/insolar/x-crypto/subtle"
 	"math/big"
 )
 

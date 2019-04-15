@@ -9,7 +9,8 @@ package aes
 import (
 	"errors"
 	"github.com/insolar/x-crypto/cipher"
-	"unsafe"
+	subtleoverlap "github.com/insolar/x-crypto/internal/subtle"
+	"github.com/insolar/x-crypto/subtle"
 )
 
 // The following functions are defined in gcm_*.s.
@@ -77,27 +78,6 @@ func (g *gcmAsm) Overhead() int {
 	return g.tagSize
 }
 
-// AnyOverlap reports whether x and y share memory at any (not necessarily
-// corresponding) index. The memory beyond the slice length is ignored.
-func AnyOverlap(x, y []byte) bool {
-	return len(x) > 0 && len(y) > 0 &&
-		uintptr(unsafe.Pointer(&x[0])) <= uintptr(unsafe.Pointer(&y[len(y)-1])) &&
-		uintptr(unsafe.Pointer(&y[0])) <= uintptr(unsafe.Pointer(&x[len(x)-1]))
-}
-
-// InexactOverlap reports whether x and y share memory at any non-corresponding
-// index. The memory beyond the slice length is ignored. Note that x and y can
-// have different lengths and still not have any inexact overlap.
-//
-// InexactOverlap can be used to implement the requirements of the crypto/cipher
-// AEAD, Block, BlockMode and Stream interfaces.
-func InexactOverlap(x, y []byte) bool {
-	if len(x) == 0 || len(y) == 0 || &x[0] == &y[0] {
-		return false
-	}
-	return AnyOverlap(x, y)
-}
-
 // sliceForAppend takes a slice and a requested number of bytes. It returns a
 // slice with the contents of the given slice followed by that many bytes and a
 // second slice that aliases into it and contains only the extra bytes. If the
@@ -141,7 +121,7 @@ func (g *gcmAsm) Seal(dst, nonce, plaintext, data []byte) []byte {
 	gcmAesData(&g.productTable, data, &tagOut)
 
 	ret, out := sliceForAppend(dst, len(plaintext)+g.tagSize)
-	if InexactOverlap(out[:len(plaintext)], plaintext) {
+	if subtleoverlap.InexactOverlap(out[:len(plaintext)], plaintext) {
 		panic("crypto/cipher: invalid buffer overlap")
 	}
 	if len(plaintext) > 0 {
@@ -194,7 +174,7 @@ func (g *gcmAsm) Open(dst, nonce, ciphertext, data []byte) ([]byte, error) {
 	gcmAesData(&g.productTable, data, &expectedTag)
 
 	ret, out := sliceForAppend(dst, len(ciphertext))
-	if InexactOverlap(out, ciphertext) {
+	if subtleoverlap.InexactOverlap(out, ciphertext) {
 		panic("crypto/cipher: invalid buffer overlap")
 	}
 	if len(ciphertext) > 0 {
@@ -202,7 +182,7 @@ func (g *gcmAsm) Open(dst, nonce, ciphertext, data []byte) ([]byte, error) {
 	}
 	gcmAesFinish(&g.productTable, &tagMask, &expectedTag, uint64(len(ciphertext)), uint64(len(data)))
 
-	if ConstantTimeCompare(expectedTag[:g.tagSize], tag) != 1 {
+	if subtle.ConstantTimeCompare(expectedTag[:g.tagSize], tag) != 1 {
 		for i := range out {
 			out[i] = 0
 		}
@@ -210,22 +190,4 @@ func (g *gcmAsm) Open(dst, nonce, ciphertext, data []byte) ([]byte, error) {
 	}
 
 	return ret, nil
-}
-
-func ConstantTimeCompare(x, y []byte) int {
-	if len(x) != len(y) {
-		return 0
-	}
-
-	var v byte
-
-	for i := 0; i < len(x); i++ {
-		v |= x[i] ^ y[i]
-	}
-
-	return ConstantTimeByteEq(v, 0)
-}
-
-func ConstantTimeByteEq(x, y uint8) int {
-	return int((uint32(x^y) - 1) >> 31)
 }

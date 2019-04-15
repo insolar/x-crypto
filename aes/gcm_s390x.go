@@ -6,9 +6,9 @@ package aes
 
 import (
 	"errors"
-	subtle "github.com/insolar/x-crypto"
-	subtleoverlap "github.com/insolar/x-crypto"
 	"github.com/insolar/x-crypto/cipher"
+	subtleoverlap "github.com/insolar/x-crypto/internal/subtle"
+	"github.com/insolar/x-crypto/subtle"
 	"internal/cpu"
 )
 

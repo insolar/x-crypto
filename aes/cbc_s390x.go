@@ -5,8 +5,8 @@
 package aes
 
 import (
-	subtle "github.com/insolar/x-crypto"
 	"github.com/insolar/x-crypto/cipher"
+	"github.com/insolar/x-crypto/internal/subtle"
 )
 
 // Assert that aesCipherAsm implements the cbcEncAble and cbcDecAble interfaces.

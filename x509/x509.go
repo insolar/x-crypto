@@ -16,7 +16,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/insolar/x-crypto"
-	"github.com/insolar/x-crypto/cryptobyte"
 	"github.com/insolar/x-crypto/dsa"
 	"github.com/insolar/x-crypto/ecdsa"
 	"github.com/insolar/x-crypto/elliptic"
@@ -34,7 +33,8 @@ import (
 	"time"
 	"unicode/utf8"
 
-	cryptobyte_asn1 "github.com/insolar/x-crypto/cryptobyte"
+	"golang.org/x/crypto/cryptobyte"
+	cryptobyte_asn1 "golang.org/x/crypto/cryptobyte/asn1"
 )
 
 // pkixPublicKey reflects a PKIX public key structure. See SubjectPublicKeyInfo
@@ -315,7 +315,7 @@ var signatureAlgorithmDetails = []struct {
 	pubKeyAlgo PublicKeyAlgorithm
 	hash       crypto.Hash
 }{
-	{MD2WithRSA, "MD2-RSA", oidSignatureMD2WithRSA, RSA, crypto.Hash(0) /* no value for MD2 */},
+	{MD2WithRSA, "MD2-RSA", oidSignatureMD2WithRSA, RSA, crypto.Hash(0) /* no value for MD2 */ },
 	{MD5WithRSA, "MD5-RSA", oidSignatureMD5WithRSA, RSA, crypto.MD5},
 	{SHA1WithRSA, "SHA1-RSA", oidSignatureSHA1WithRSA, RSA, crypto.SHA1},
 	{SHA1WithRSA, "SHA1-RSA", oidISOSignatureSHA1WithRSA, RSA, crypto.SHA1},

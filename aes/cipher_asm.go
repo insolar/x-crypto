@@ -7,9 +7,9 @@
 package aes
 
 import (
-	subtle "github.com/insolar/x-crypto"
 	"github.com/insolar/x-crypto/cipher"
-	"github.com/insolar/x-crypto/internal/cpu"
+	"github.com/insolar/x-crypto/internal/subtle"
+	"internal/cpu"
 )
 
 // defined in asm_*.s

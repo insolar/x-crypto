@@ -7,8 +7,8 @@ package des
 import (
 	"encoding/binary"
 	"github.com/insolar/x-crypto/cipher"
+	"github.com/insolar/x-crypto/internal/subtle"
 	"strconv"
-	"unsafe"
 )
 
 // The DES block size in bytes.
@@ -45,7 +45,7 @@ func (c *desCipher) Encrypt(dst, src []byte) {
 	if len(dst) < BlockSize {
 		panic("crypto/des: output not full block")
 	}
-	if InexactOverlap(dst[:BlockSize], src[:BlockSize]) {
+	if subtle.InexactOverlap(dst[:BlockSize], src[:BlockSize]) {
 		panic("crypto/des: invalid buffer overlap")
 	}
 	encryptBlock(c.subkeys[:], dst, src)
@@ -58,7 +58,7 @@ func (c *desCipher) Decrypt(dst, src []byte) {
 	if len(dst) < BlockSize {
 		panic("crypto/des: output not full block")
 	}
-	if InexactOverlap(dst[:BlockSize], src[:BlockSize]) {
+	if subtle.InexactOverlap(dst[:BlockSize], src[:BlockSize]) {
 		panic("crypto/des: invalid buffer overlap")
 	}
 	decryptBlock(c.subkeys[:], dst, src)
@@ -91,7 +91,7 @@ func (c *tripleDESCipher) Encrypt(dst, src []byte) {
 	if len(dst) < BlockSize {
 		panic("crypto/des: output not full block")
 	}
-	if InexactOverlap(dst[:BlockSize], src[:BlockSize]) {
+	if subtle.InexactOverlap(dst[:BlockSize], src[:BlockSize]) {
 		panic("crypto/des: invalid buffer overlap")
 	}
 
@@ -126,7 +126,7 @@ func (c *tripleDESCipher) Decrypt(dst, src []byte) {
 	if len(dst) < BlockSize {
 		panic("crypto/des: output not full block")
 	}
-	if InexactOverlap(dst[:BlockSize], src[:BlockSize]) {
+	if subtle.InexactOverlap(dst[:BlockSize], src[:BlockSize]) {
 		panic("crypto/des: invalid buffer overlap")
 	}
 
@@ -152,25 +152,4 @@ func (c *tripleDESCipher) Decrypt(dst, src []byte) {
 
 	preOutput := (uint64(right) << 32) | uint64(left)
 	binary.BigEndian.PutUint64(dst, permuteFinalBlock(preOutput))
-}
-
-// AnyOverlap reports whether x and y share memory at any (not necessarily
-// corresponding) index. The memory beyond the slice length is ignored.
-func AnyOverlap(x, y []byte) bool {
-	return len(x) > 0 && len(y) > 0 &&
-		uintptr(unsafe.Pointer(&x[0])) <= uintptr(unsafe.Pointer(&y[len(y)-1])) &&
-		uintptr(unsafe.Pointer(&y[0])) <= uintptr(unsafe.Pointer(&x[len(x)-1]))
-}
-
-// InexactOverlap reports whether x and y share memory at any non-corresponding
-// index. The memory beyond the slice length is ignored. Note that x and y can
-// have different lengths and still not have any inexact overlap.
-//
-// InexactOverlap can be used to implement the requirements of the crypto/cipher
-// AEAD, Block, BlockMode and Stream interfaces.
-func InexactOverlap(x, y []byte) bool {
-	if len(x) == 0 || len(y) == 0 || &x[0] == &y[0] {
-		return false
-	}
-	return AnyOverlap(x, y)
 }

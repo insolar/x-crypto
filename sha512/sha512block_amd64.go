@@ -6,7 +6,7 @@
 
 package sha512
 
-import "github.com/insolar/x-crypto/internal/cpu"
+import "internal/cpu"
 
 //go:noescape
 func blockAVX2(dig *digest, p []byte)

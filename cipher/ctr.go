@@ -12,7 +12,7 @@
 
 package cipher
 
-import subtle "github.com/insolar/x-crypto"
+import "github.com/insolar/x-crypto/internal/subtle"
 
 type ctr struct {
 	b       Block

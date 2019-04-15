@@ -7,11 +7,11 @@ package tls
 import (
 	"bytes"
 	"errors"
-	subtle "github.com/insolar/x-crypto"
 	"github.com/insolar/x-crypto/aes"
 	"github.com/insolar/x-crypto/cipher"
 	"github.com/insolar/x-crypto/hmac"
 	"github.com/insolar/x-crypto/sha256"
+	"github.com/insolar/x-crypto/subtle"
 	"io"
 )
 

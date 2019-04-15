@@ -22,7 +22,7 @@ timing side-channels:
 package hmac
 
 import (
-	"github.com/insolar/x-crypto"
+	"github.com/insolar/x-crypto/subtle"
 	"hash"
 )
 
@@ -97,5 +97,5 @@ func Equal(mac1, mac2 []byte) bool {
 	// We don't have to be constant time if the lengths of the MACs are
 	// different as that suggests that a completely different hash function
 	// was used.
-	return crypto.ConstantTimeCompare(mac1, mac2) == 1
+	return subtle.ConstantTimeCompare(mac1, mac2) == 1
 }

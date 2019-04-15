@@ -6,7 +6,7 @@
 
 package cipher
 
-import subtle "github.com/insolar/x-crypto"
+import "github.com/insolar/x-crypto/internal/subtle"
 
 type ofb struct {
 	b       Block

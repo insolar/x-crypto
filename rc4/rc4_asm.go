@@ -6,7 +6,7 @@
 
 package rc4
 
-import subtle "github.com/insolar/x-crypto"
+import "github.com/insolar/x-crypto/internal/subtle"
 
 func xorKeyStream(dst, src *byte, n int, state *[256]uint32, i, j *uint8)
 

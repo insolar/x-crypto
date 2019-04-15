@@ -10,7 +10,7 @@
 package rc4
 
 import (
-	subtle "github.com/insolar/x-crypto"
+	"github.com/insolar/x-crypto/internal/subtle"
 	"strconv"
 )
 

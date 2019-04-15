@@ -6,7 +6,8 @@ package cipher
 
 import (
 	"errors"
-	subtle "github.com/insolar/x-crypto"
+	subtleoverlap "github.com/insolar/x-crypto/internal/subtle"
+	"github.com/insolar/x-crypto/subtle"
 )
 
 // AEAD is a cipher mode providing authenticated encryption with associated
@@ -166,7 +167,7 @@ func (g *gcm) Seal(dst, nonce, plaintext, data []byte) []byte {
 	}
 
 	ret, out := sliceForAppend(dst, len(plaintext)+g.tagSize)
-	if InexactOverlap(out, plaintext) {
+	if subtleoverlap.InexactOverlap(out, plaintext) {
 		panic("crypto/cipher: invalid buffer overlap")
 	}
 
@@ -217,7 +218,7 @@ func (g *gcm) Open(dst, nonce, ciphertext, data []byte) ([]byte, error) {
 	g.auth(expectedTag[:], ciphertext, data, &tagMask)
 
 	ret, out := sliceForAppend(dst, len(ciphertext))
-	if InexactOverlap(out, ciphertext) {
+	if subtleoverlap.InexactOverlap(out, ciphertext) {
 		panic("crypto/cipher: invalid buffer overlap")
 	}
 
