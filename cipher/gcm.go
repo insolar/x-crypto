@@ -166,7 +166,7 @@ func (g *gcm) Seal(dst, nonce, plaintext, data []byte) []byte {
 	}
 
 	ret, out := sliceForAppend(dst, len(plaintext)+g.tagSize)
-	if subtleoverlap.InexactOverlap(out, plaintext) {
+	if InexactOverlap(out, plaintext) {
 		panic("crypto/cipher: invalid buffer overlap")
 	}
 

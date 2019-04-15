@@ -91,7 +91,7 @@ func (c *tripleDESCipher) Encrypt(dst, src []byte) {
 	if len(dst) < BlockSize {
 		panic("crypto/des: output not full block")
 	}
-	if subtle.InexactOverlap(dst[:BlockSize], src[:BlockSize]) {
+	if InexactOverlap(dst[:BlockSize], src[:BlockSize]) {
 		panic("crypto/des: invalid buffer overlap")
 	}
 
@@ -126,7 +126,7 @@ func (c *tripleDESCipher) Decrypt(dst, src []byte) {
 	if len(dst) < BlockSize {
 		panic("crypto/des: output not full block")
 	}
-	if subtle.InexactOverlap(dst[:BlockSize], src[:BlockSize]) {
+	if InexactOverlap(dst[:BlockSize], src[:BlockSize]) {
 		panic("crypto/des: invalid buffer overlap")
 	}
 
