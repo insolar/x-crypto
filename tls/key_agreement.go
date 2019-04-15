@@ -12,10 +12,9 @@ import (
 	"github.com/insolar/x-crypto/rsa"
 	"github.com/insolar/x-crypto/sha1"
 	"github.com/insolar/x-crypto/x509"
+	"golang.org/x/crypto/curve25519"
 	"io"
 	"math/big"
-
-	"golang_org/x/crypto/curve25519"
 )
 
 var errClientKeyExchange = errors.New("tls: invalid ClientKeyExchange message")
