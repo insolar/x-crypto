@@ -5,9 +5,8 @@
 package subtle_test
 
 import (
-	"testing"
-
 	"github.com/insolar/x-crypto/internal/subtle"
+	"testing"
 )
 
 var a, b [100]byte
