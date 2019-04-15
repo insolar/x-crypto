@@ -17,11 +17,11 @@ package ecdsa
 //     http://www.secg.org/sec1-v2.pdf
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
 	"encoding/asn1"
 	"errors"
 	"github.com/insolar/x-crypto"
-	"github.com/insolar/x-crypto/aes"
-	"github.com/insolar/x-crypto/cipher"
 	"github.com/insolar/x-crypto/elliptic"
 	"github.com/insolar/x-crypto/sha512"
 	"io"

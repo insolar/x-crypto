@@ -11,8 +11,8 @@ package rand
 
 import (
 	"bufio"
-	"github.com/insolar/x-crypto/aes"
-	"github.com/insolar/x-crypto/cipher"
+	"crypto/aes"
+	"crypto/cipher"
 	"io"
 	"os"
 	"runtime"
