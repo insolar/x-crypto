@@ -12,10 +12,10 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/des"
-	"crypto/md5"
 	"encoding/hex"
 	"encoding/pem"
 	"errors"
+	"github.com/insolar/x-crypto/md5"
 	"io"
 	"strings"
 )

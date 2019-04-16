@@ -7,13 +7,13 @@
 // This file is run by the x509 tests to ensure that a program with minimal
 // imports can sign certificates without errors resulting from missing hash
 // functions.
-package x509
+package main
 
 import (
-	"crypto/rand"
-	"crypto/x509"
-	"crypto/x509/pkix"
 	"encoding/pem"
+	"github.com/insolar/x-crypto/rand"
+	"github.com/insolar/x-crypto/x509"
+	"github.com/insolar/x-crypto/x509/pkix"
 	"math/big"
 	"time"
 )

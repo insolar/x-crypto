@@ -17,17 +17,17 @@ package ecdsa
 //     http://www.secg.org/sec1-v2.pdf
 
 import (
-	"crypto"
 	"crypto/aes"
 	"crypto/cipher"
-	"crypto/sha512"
 	"encoding/asn1"
 	"errors"
+	"github.com/insolar/x-crypto"
+	"github.com/insolar/x-crypto/elliptic"
+	"github.com/insolar/x-crypto/sha512"
 	"io"
 	"math/big"
 
-	"github.com/insolar/x-crypto/elliptic"
-	"github.com/insolar/x-crypto/randutil"
+	"github.com/insolar/x-crypto/internal/randutil"
 )
 
 // A invertible implements fast inverse mod Curve.Params().N

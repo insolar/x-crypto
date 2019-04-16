@@ -14,16 +14,16 @@
 // Apple publishes the list of trusted root certificates for iOS on
 // support.apple.com. So we parse the list and extract the certificates from
 // an OS X machine and embed them into the x509 package.
-package x509
+package main
 
 import (
 	"bytes"
-	"crypto/sha256"
-	"crypto/x509"
 	"encoding/hex"
 	"encoding/pem"
 	"flag"
 	"fmt"
+	"github.com/insolar/x-crypto/sha256"
+	"github.com/insolar/x-crypto/x509"
 	"go/format"
 	"io/ioutil"
 	"log"
