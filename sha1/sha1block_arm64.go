@@ -4,8 +4,6 @@
 
 package sha1
 
-import "internal/cpu"
-
 var k = []uint32{
 	0x5A827999,
 	0x6ED9EBA1,
