@@ -84,7 +84,7 @@ novector:
 #define ZER   V4
 #define SEL1  V5
 #define CAR1  V6
-TEXT ·p256NegCond(SB), NOSPLIT, $0
+TEXT ·p256NegCondX(SB), NOSPLIT, $0
 	MOVD val+0(FP), P1ptr
 
 	MOVD $p256mul<>+0x00(SB), CPOOL
@@ -143,7 +143,7 @@ TEXT ·p256NegCond(SB), NOSPLIT, $0
 
 #define ZER   V18
 #define SEL1  V19
-TEXT ·p256MovCond(SB), NOSPLIT, $0
+TEXT ·p256MovCondX(SB), NOSPLIT, $0
 	MOVD   res+0(FP), P3ptr
 	MOVD   a+8(FP), P1ptr
 	MOVD   b+16(FP), P2ptr
@@ -225,7 +225,7 @@ TEXT ·p256MovCond(SB), NOSPLIT, $0
 #define IDX   V19
 #define SEL1  V20
 #define SEL2  V21
-TEXT ·p256Select(SB), NOSPLIT, $0
+TEXT ·p256SelectX(SB), NOSPLIT, $0
 	MOVD   point+0(FP), P3ptr
 	MOVD   table+8(FP), P1ptr
 	VLREPB idx+(32+7)(FP), IDX
@@ -317,7 +317,7 @@ loop_select:
 #define IDX   V19
 #define SEL1  V20
 #define SEL2  V21
-TEXT ·p256SelectBase(SB), NOSPLIT, $0
+TEXT ·p256SelectBaseX(SB), NOSPLIT, $0
 	MOVD   point+0(FP), P3ptr
 	MOVD   table+8(FP), P1ptr
 	VLREPB idx+(32+7)(FP), IDX
@@ -405,7 +405,7 @@ loop_select:
 #define PL    V13
 #define PH    V14
 
-TEXT ·p256FromMont(SB), NOSPLIT, $0
+TEXT ·p256FromMontX(SB), NOSPLIT, $0
 	MOVD res+0(FP), res_ptr
 	MOVD in+24(FP), x_ptr
 
@@ -539,7 +539,7 @@ TEXT ·p256FromMont(SB), NOSPLIT, $0
 
 #define MK0   V30
 #define K0    V31
-TEXT ·p256OrdMul(SB), NOSPLIT, $0
+TEXT ·p256OrdMulX(SB), NOSPLIT, $0
 	MOVD res+0(FP), res_ptr
 	MOVD in1+24(FP), x_ptr
 	MOVD in2+48(FP), y_ptr
@@ -1351,7 +1351,7 @@ TEXT p256MulInternal<>(SB), NOSPLIT, $0-0
 // Constants
 #define P0    V30
 #define P1    V31
-TEXT ·p256MulAsm(SB), NOSPLIT, $0
+TEXT ·p256MulAsmX(SB), NOSPLIT, $0
 	MOVD res+0(FP), res_ptr
 	MOVD in1+24(FP), x_ptr
 	MOVD in2+48(FP), y_ptr
@@ -1488,7 +1488,7 @@ X=T4; Y=Y1; MUL;T-   // T4 = T4*Y1              T3   T4
 SUB(T<T3-T) Y3:=T    // Y3 = T3-T4              T3   T4
 
 	*/
-TEXT ·p256PointAddAffineAsm(SB), NOSPLIT, $0
+TEXT ·p256PointAddAffineAsmX(SB), NOSPLIT, $0
 	MOVD P3+0(FP), P3ptr
 	MOVD P1+8(FP), P1ptr
 	MOVD P2+16(FP), P2ptr
@@ -1814,7 +1814,7 @@ TEXT ·p256PointAddAffineAsm(SB), NOSPLIT, $0
  *       Y3 = T1-Y3
  */
 
-TEXT ·p256PointDoubleAsm(SB), NOSPLIT, $0
+TEXT ·p256PointDoubleAsmX(SB), NOSPLIT, $0
 	MOVD P3+0(FP), P3ptr
 	MOVD P1+8(FP), P1ptr
 
@@ -2050,7 +2050,7 @@ TEXT ·p256PointDoubleAsm(SB), NOSPLIT, $0
 	// X=S1; Y=T2; MUL; T-   // T2 = S1*T2
 	// SUB(T<U1-T); Y3:=T    // Y3 = Y3-T2 << store-out Y3 result reg
 	*/
-TEXT ·p256PointAddAsm(SB), NOSPLIT, $0
+TEXT ·p256PointAddAsmX(SB), NOSPLIT, $0
 	MOVD P3+0(FP), P3ptr
 	MOVD P1+8(FP), P1ptr
 	MOVD P2+16(FP), P2ptr
