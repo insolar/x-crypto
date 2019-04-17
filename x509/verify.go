@@ -12,7 +12,6 @@ import (
 	"net/url"
 	"os"
 	"reflect"
-	"runtime"
 	"strings"
 	"time"
 	"unicode/utf8"
