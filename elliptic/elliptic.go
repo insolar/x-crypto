@@ -422,6 +422,14 @@ func P521() Curve {
 	return p521
 }
 
+// P256 returns a Curve which implements P-256 (see FIPS 186-3, section D.2.3)
+//
+// The cryptographic operations are implemented using constant-time algorithms.
+func P256() Curve {
+	initonce.Do(initAll)
+	return p256
+}
+
 // Secp256k1 returns a Curve which implements secp256k1 (see SEC 2, section 2.4.1)
 //
 // The cryptographic operations do not use constant-time algorithms.
