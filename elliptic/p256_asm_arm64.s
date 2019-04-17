@@ -65,11 +65,11 @@ GLOBL p256one<>(SB), 8, $32
 
 /* ---------------------------------------*/
 // func p256LittleToBig(res []byte, in []uint64)
-TEXT ·p256LittleToBig(SB),NOSPLIT,$0
+TEXT ·p256LittleToBigX(SB),NOSPLIT,$0
 	JMP	·p256BigToLittle(SB)
 /* ---------------------------------------*/
 // func p256BigToLittle(res []uint64, in []byte)
-TEXT ·p256BigToLittle(SB),NOSPLIT,$0
+TEXT ·p256BigToLittleX(SB),NOSPLIT,$0
 	MOVD	res+0(FP), res_ptr
 	MOVD	in+24(FP), a_ptr
 
@@ -87,7 +87,7 @@ TEXT ·p256BigToLittle(SB),NOSPLIT,$0
 /* ---------------------------------------*/
 // func p256MovCond(res, a, b []uint64, cond int)
 // If cond == 0 res=b, else res=a
-TEXT ·p256MovCond(SB),NOSPLIT,$0
+TEXT ·p256MovCondX(SB),NOSPLIT,$0
 	MOVD	res+0(FP), res_ptr
 	MOVD	a+24(FP), a_ptr
 	MOVD	b+48(FP), b_ptr
@@ -132,7 +132,7 @@ TEXT ·p256MovCond(SB),NOSPLIT,$0
 	RET
 /* ---------------------------------------*/
 // func p256NegCond(val []uint64, cond int)
-TEXT ·p256NegCond(SB),NOSPLIT,$0
+TEXT ·p256NegCondX(SB),NOSPLIT,$0
 	MOVD	val+0(FP), a_ptr
 	MOVD	cond+24(FP), hlp0
 	MOVD	a_ptr, res_ptr
@@ -162,7 +162,7 @@ TEXT ·p256NegCond(SB),NOSPLIT,$0
 	RET
 /* ---------------------------------------*/
 // func p256Sqr(res, in []uint64, n int)
-TEXT ·p256Sqr(SB),NOSPLIT,$0
+TEXT ·p256SqrX(SB),NOSPLIT,$0
 	MOVD	res+0(FP), res_ptr
 	MOVD	in+24(FP), a_ptr
 	MOVD	n+48(FP), b_ptr
@@ -187,7 +187,7 @@ sqrLoop:
 	RET
 /* ---------------------------------------*/
 // func p256Mul(res, in1, in2 []uint64)
-TEXT ·p256Mul(SB),NOSPLIT,$0
+TEXT ·p256MulX(SB),NOSPLIT,$0
 	MOVD	res+0(FP), res_ptr
 	MOVD	in1+24(FP), a_ptr
 	MOVD	in2+48(FP), b_ptr
@@ -208,7 +208,7 @@ TEXT ·p256Mul(SB),NOSPLIT,$0
 	RET
 /* ---------------------------------------*/
 // func p256FromMont(res, in []uint64)
-TEXT ·p256FromMont(SB),NOSPLIT,$0
+TEXT ·p256FromMontX(SB),NOSPLIT,$0
 	MOVD	res+0(FP), res_ptr
 	MOVD	in+24(FP), a_ptr
 
@@ -270,7 +270,7 @@ TEXT ·p256FromMont(SB),NOSPLIT,$0
 // Indexed from 1 to 15, with -1 offset
 // (index 0 is implicitly point at infinity)
 // func p256Select(point, table []uint64, idx int)
-TEXT ·p256Select(SB),NOSPLIT,$0
+TEXT ·p256SelectX(SB),NOSPLIT,$0
 	MOVD	idx+48(FP), const0
 	MOVD	table+24(FP), b_ptr
 	MOVD	point+0(FP), res_ptr
@@ -325,7 +325,7 @@ loop_select:
 /* ---------------------------------------*/
 // Constant time point access to base point table.
 // func p256SelectBase(point, table []uint64, idx int)
-TEXT ·p256SelectBase(SB),NOSPLIT,$0
+TEXT ·p256SelectBaseX(SB),NOSPLIT,$0
 	MOVD	idx+48(FP), t0
 	MOVD	table+24(FP), t1
 	MOVD	point+0(FP), res_ptr
@@ -367,7 +367,7 @@ loop_select:
 	RET
 /* ---------------------------------------*/
 // func p256OrdSqr(res, in []uint64, n int)
-TEXT ·p256OrdSqr(SB),NOSPLIT,$0
+TEXT ·p256OrdSqrX(SB),NOSPLIT,$0
 	MOVD	in+24(FP), a_ptr
 	MOVD	n+48(FP), b_ptr
 
@@ -566,7 +566,7 @@ ordSqrLoop:
 	RET
 /* ---------------------------------------*/
 // func p256OrdMul(res, in1, in2 []uint64)
-TEXT ·p256OrdMul(SB),NOSPLIT,$0
+TEXT ·p256OrdMulX(SB),NOSPLIT,$0
 	MOVD	in1+24(FP), a_ptr
 	MOVD	in2+48(FP), b_ptr
 
@@ -1092,7 +1092,7 @@ TEXT p256MulInternal<>(SB),NOSPLIT,$0
 #define u2(off) (32*11 + 8 + off)(RSP)
 
 // func p256PointAddAffineAsm(res, in1, in2 []uint64, sign, sel, zero int)
-TEXT ·p256PointAddAffineAsm(SB),0,$264-96
+TEXT ·p256PointAddAffineAsmX(SB),0,$264-96
 	MOVD	in1+24(FP), a_ptr
 	MOVD	in2+48(FP), b_ptr
 	MOVD	sign+72(FP), hlp0
@@ -1289,7 +1289,7 @@ TEXT ·p256PointAddAffineAsm(SB),0,$264-96
 #define tmp(off)  (32*3 + 8 + off)(RSP)
 
 //func p256PointDoubleAsm(res, in []uint64)
-TEXT ·p256PointDoubleAsm(SB),NOSPLIT,$136-48
+TEXT ·p256PointDoubleAsmX(SB),NOSPLIT,$136-48
 	MOVD	res+0(FP), res_ptr
 	MOVD	in+24(FP), a_ptr
 
@@ -1389,7 +1389,7 @@ TEXT ·p256PointDoubleAsm(SB),NOSPLIT,$136-48
 #define y3out(off) (off + 32)(b_ptr)
 #define z3out(off) (off + 64)(b_ptr)
 //func p256PointAddAsm(res, in1, in2 []uint64) int
-TEXT ·p256PointAddAsm(SB),0,$392-80
+TEXT ·p256PointAddAsmX(SB),0,$392-80
 	// See https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian-3.html#addition-add-2007-bl
 	// Move input to stack in order to free registers
 	MOVD	in1+24(FP), a_ptr
