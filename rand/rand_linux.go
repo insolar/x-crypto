@@ -4,7 +4,9 @@
 
 package rand
 
-import "github.com/insolar/x-crypto/rand/unix"
+import (
+	"github.com/insolar/x-crypto/rand/internal/unix"
+)
 
 func init() {
 	altGetRandom = batched(getRandomLinux, maxGetRandomRead)
