@@ -4,9 +4,7 @@
 
 package rand
 
-import (
-	"github.com/insolar/x-crypto/rand/unix"
-)
+import "github.com/insolar/x-crypto/rand/unix"
 
 func init() {
 	altGetRandom = getRandomOpenBSD
