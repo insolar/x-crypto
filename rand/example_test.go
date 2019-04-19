@@ -6,8 +6,8 @@ package rand_test
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/insolar/x-crypto/rand"
+	"fmt"
 )
 
 // This example reads 10 cryptographically secure pseudorandom numbers from

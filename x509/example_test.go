@@ -5,12 +5,12 @@
 package x509_test
 
 import (
-	"encoding/pem"
-	"fmt"
 	"github.com/insolar/x-crypto/dsa"
 	"github.com/insolar/x-crypto/ecdsa"
 	"github.com/insolar/x-crypto/rsa"
 	"github.com/insolar/x-crypto/x509"
+	"encoding/pem"
+	"fmt"
 )
 
 func ExampleCertificate_Verify() {

@@ -10,10 +10,10 @@
 package main
 
 import (
-	"encoding/pem"
 	"github.com/insolar/x-crypto/rand"
 	"github.com/insolar/x-crypto/x509"
 	"github.com/insolar/x-crypto/x509/pkix"
+	"encoding/pem"
 	"math/big"
 	"time"
 )

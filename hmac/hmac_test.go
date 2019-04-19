@@ -5,11 +5,11 @@
 package hmac
 
 import (
-	"fmt"
 	"github.com/insolar/x-crypto/md5"
 	"github.com/insolar/x-crypto/sha1"
 	"github.com/insolar/x-crypto/sha256"
 	"github.com/insolar/x-crypto/sha512"
+	"fmt"
 	"hash"
 	"testing"
 )

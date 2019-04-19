@@ -8,9 +8,9 @@ package sha512
 
 import (
 	"bytes"
+	"github.com/insolar/x-crypto/rand"
 	"encoding"
 	"encoding/hex"
-	"github.com/insolar/x-crypto/rand"
 	"hash"
 	"io"
 	"testing"

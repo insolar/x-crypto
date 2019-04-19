@@ -5,8 +5,8 @@
 package md5_test
 
 import (
-	"fmt"
 	"github.com/insolar/x-crypto/md5"
+	"fmt"
 	"io"
 	"log"
 	"os"

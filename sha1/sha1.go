@@ -9,8 +9,8 @@
 package sha1
 
 import (
-	"errors"
 	"github.com/insolar/x-crypto"
+	"errors"
 	"hash"
 )
 

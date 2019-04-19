@@ -23,10 +23,10 @@
 package rsa
 
 import (
-	"errors"
 	"github.com/insolar/x-crypto"
 	"github.com/insolar/x-crypto/rand"
 	"github.com/insolar/x-crypto/subtle"
+	"errors"
 	"hash"
 	"io"
 	"math"

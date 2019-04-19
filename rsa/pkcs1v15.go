@@ -5,9 +5,9 @@
 package rsa
 
 import (
-	"errors"
 	"github.com/insolar/x-crypto"
 	"github.com/insolar/x-crypto/subtle"
+	"errors"
 	"io"
 	"math/big"
 

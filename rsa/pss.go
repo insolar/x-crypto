@@ -10,8 +10,8 @@ package rsa
 
 import (
 	"bytes"
-	"errors"
 	"github.com/insolar/x-crypto"
+	"errors"
 	"hash"
 	"io"
 	"math/big"
@@ -81,7 +81,7 @@ func emsaPSSEncode(mHash []byte, emBits int, salt []byte, hash hash.Hash) ([]byt
 	// 11. Set the leftmost 8 * emLen - emBits bits of the leftmost octet in
 	//     maskedDB to zero.
 
-	db[0] &= 0xFF >> uint(8*emLen-emBits)
+	db[0] &= (0xFF >> uint(8*emLen-emBits))
 
 	// 12. Let EM = maskedDB || H || 0xbc.
 	em[emLen-1] = 0xBC
@@ -132,7 +132,7 @@ func emsaPSSVerify(mHash, em []byte, emBits, sLen int, hash hash.Hash) error {
 
 	// 9.  Set the leftmost 8 * emLen - emBits bits of the leftmost octet in DB
 	//     to zero.
-	db[0] &= 0xFF >> uint(8*emLen-emBits)
+	db[0] &= (0xFF >> uint(8*emLen-emBits))
 
 	if sLen == PSSSaltLengthAuto {
 	FindSaltLength:

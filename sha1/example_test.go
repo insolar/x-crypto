@@ -5,8 +5,8 @@
 package sha1_test
 
 import (
-	"fmt"
 	"github.com/insolar/x-crypto/sha1"
+	"fmt"
 	"io"
 	"log"
 	"os"

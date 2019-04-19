@@ -11,8 +11,8 @@
 package md5
 
 import (
-	"errors"
 	"github.com/insolar/x-crypto"
+	"errors"
 	"hash"
 )
 

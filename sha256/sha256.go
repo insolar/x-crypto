@@ -7,8 +7,8 @@
 package sha256
 
 import (
-	"errors"
 	"github.com/insolar/x-crypto"
+	"errors"
 	"hash"
 )
 

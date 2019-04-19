@@ -11,10 +11,6 @@ package x509
 
 import (
 	"bytes"
-	"encoding/asn1"
-	"encoding/pem"
-	"errors"
-	"fmt"
 	"github.com/insolar/x-crypto"
 	"github.com/insolar/x-crypto/dsa"
 	"github.com/insolar/x-crypto/ecdsa"
@@ -24,6 +20,10 @@ import (
 	_ "github.com/insolar/x-crypto/sha256"
 	_ "github.com/insolar/x-crypto/sha512"
 	"github.com/insolar/x-crypto/x509/pkix"
+	"encoding/asn1"
+	"encoding/pem"
+	"errors"
+	"fmt"
 	"io"
 	"math/big"
 	"net"
@@ -315,7 +315,7 @@ var signatureAlgorithmDetails = []struct {
 	pubKeyAlgo PublicKeyAlgorithm
 	hash       crypto.Hash
 }{
-	{MD2WithRSA, "MD2-RSA", oidSignatureMD2WithRSA, RSA, crypto.Hash(0) /* no value for MD2 */ },
+	{MD2WithRSA, "MD2-RSA", oidSignatureMD2WithRSA, RSA, crypto.Hash(0) /* no value for MD2 */},
 	{MD5WithRSA, "MD5-RSA", oidSignatureMD5WithRSA, RSA, crypto.MD5},
 	{SHA1WithRSA, "SHA1-RSA", oidSignatureSHA1WithRSA, RSA, crypto.SHA1},
 	{SHA1WithRSA, "SHA1-RSA", oidISOSignatureSHA1WithRSA, RSA, crypto.SHA1},
@@ -489,10 +489,10 @@ func getPublicKeyAlgorithmFromOID(oid asn1.ObjectIdentifier) PublicKeyAlgorithm 
 //
 // NB: secp256r1 is equivalent to prime256v1
 var (
-	oidNamedCurveP224      = asn1.ObjectIdentifier{1, 3, 132, 0, 33}
-	oidNamedCurveP256      = asn1.ObjectIdentifier{1, 2, 840, 10045, 3, 1, 7}
-	oidNamedCurveP384      = asn1.ObjectIdentifier{1, 3, 132, 0, 34}
-	oidNamedCurveP521      = asn1.ObjectIdentifier{1, 3, 132, 0, 35}
+	oidNamedCurveP224 = asn1.ObjectIdentifier{1, 3, 132, 0, 33}
+	oidNamedCurveP256 = asn1.ObjectIdentifier{1, 2, 840, 10045, 3, 1, 7}
+	oidNamedCurveP384 = asn1.ObjectIdentifier{1, 3, 132, 0, 34}
+	oidNamedCurveP521 = asn1.ObjectIdentifier{1, 3, 132, 0, 35}
 	oidNamedCurveSecp256k1 = asn1.ObjectIdentifier{1, 3, 132, 0, 10}
 )
 
@@ -1935,7 +1935,7 @@ func buildExtensions(template *Certificate, subjectIsEmpty bool, authorityKeyId 
 			dp := distributionPoint{
 				DistributionPoint: distributionPointName{
 					FullName: []asn1.RawValue{
-						{Tag: 6, Class: 2, Bytes: []byte(name)},
+						asn1.RawValue{Tag: 6, Class: 2, Bytes: []byte(name)},
 					},
 				},
 			}

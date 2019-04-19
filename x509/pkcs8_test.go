@@ -6,10 +6,10 @@ package x509
 
 import (
 	"bytes"
-	"encoding/hex"
 	"github.com/insolar/x-crypto/ecdsa"
 	"github.com/insolar/x-crypto/elliptic"
 	"github.com/insolar/x-crypto/rsa"
+	"encoding/hex"
 	"reflect"
 	"testing"
 )

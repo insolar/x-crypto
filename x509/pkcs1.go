@@ -5,9 +5,9 @@
 package x509
 
 import (
+	"github.com/insolar/x-crypto/rsa"
 	"encoding/asn1"
 	"errors"
-	"github.com/insolar/x-crypto/rsa"
 	"math/big"
 )
 

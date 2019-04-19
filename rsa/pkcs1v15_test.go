@@ -6,11 +6,11 @@ package rsa
 
 import (
 	"bytes"
-	"encoding/base64"
-	"encoding/hex"
 	"github.com/insolar/x-crypto"
 	"github.com/insolar/x-crypto/rand"
 	"github.com/insolar/x-crypto/sha1"
+	"encoding/base64"
+	"encoding/hex"
 	"io"
 	"math/big"
 	"testing"

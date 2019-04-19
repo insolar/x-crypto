@@ -4,6 +4,6 @@
 
 package sha512
 
-import "golang.org/x/sys/cpu"
+import "internal/cpu"
 
 var useAsm = cpu.S390X.HasSHA512

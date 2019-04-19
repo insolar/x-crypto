@@ -6,9 +6,9 @@ package md5
 
 import (
 	"bytes"
+	"github.com/insolar/x-crypto/rand"
 	"encoding"
 	"fmt"
-	"github.com/insolar/x-crypto/rand"
 	"io"
 	"testing"
 	"unsafe"

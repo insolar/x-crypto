@@ -5,8 +5,8 @@
 package sha256_test
 
 import (
-	"fmt"
 	"github.com/insolar/x-crypto/sha256"
+	"fmt"
 	"io"
 	"log"
 	"os"

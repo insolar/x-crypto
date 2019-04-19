@@ -11,8 +11,8 @@
 package sha512
 
 import (
-	"errors"
 	"github.com/insolar/x-crypto"
+	"errors"
 	"hash"
 )
 

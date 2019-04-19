@@ -6,9 +6,9 @@ package x509
 
 import (
 	"bytes"
+	"github.com/insolar/x-crypto/rand"
 	"encoding/base64"
 	"encoding/pem"
-	"github.com/insolar/x-crypto/rand"
 	"strings"
 	"testing"
 )

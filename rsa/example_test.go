@@ -5,13 +5,13 @@
 package rsa
 
 import (
-	"encoding/hex"
-	"fmt"
 	"github.com/insolar/x-crypto"
 	"github.com/insolar/x-crypto/aes"
 	"github.com/insolar/x-crypto/cipher"
 	"github.com/insolar/x-crypto/rand"
 	"github.com/insolar/x-crypto/sha256"
+	"encoding/hex"
+	"fmt"
 	"io"
 	"os"
 )

@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"reflect"
+	"runtime"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -370,7 +371,7 @@ func domainToReverseLabels(domain string) (reverseLabels []string, ok bool) {
 			reverseLabels = append(reverseLabels, domain)
 			domain = ""
 		} else {
-			reverseLabels = append(reverseLabels, domain[i+1:])
+			reverseLabels = append(reverseLabels, domain[i+1:len(domain)])
 			domain = domain[:i]
 		}
 	}
@@ -703,6 +704,97 @@ func (c *Certificate) isValid(certType int, currentChain []*Certificate, opts *V
 	return nil
 }
 
+// Verify attempts to verify c by building one or more chains from c to a
+// certificate in opts.Roots, using certificates in opts.Intermediates if
+// needed. If successful, it returns one or more chains where the first
+// element of the chain is c and the last element is from opts.Roots.
+//
+// If opts.Roots is nil and system roots are unavailable the returned error
+// will be of type SystemRootsError.
+//
+// Name constraints in the intermediates will be applied to all names claimed
+// in the chain, not just opts.DNSName. Thus it is invalid for a leaf to claim
+// example.com if an intermediate doesn't permit it, even if example.com is not
+// the name being validated. Note that DirectoryName constraints are not
+// supported.
+//
+// Extended Key Usage values are enforced down a chain, so an intermediate or
+// root that enumerates EKUs prevents a leaf from asserting an EKU not in that
+// list.
+//
+// WARNING: this function doesn't do any revocation checking.
+func (c *Certificate) Verify(opts VerifyOptions) (chains [][]*Certificate, err error) {
+	// Platform-specific verification needs the ASN.1 contents so
+	// this makes the behavior consistent across platforms.
+	if len(c.Raw) == 0 {
+		return nil, errNotParsed
+	}
+	if opts.Intermediates != nil {
+		for _, intermediate := range opts.Intermediates.certs {
+			if len(intermediate.Raw) == 0 {
+				return nil, errNotParsed
+			}
+		}
+	}
+
+	// Use Windows's own verification and chain building.
+	if opts.Roots == nil && runtime.GOOS == "windows" {
+		return c.systemVerify(&opts)
+	}
+
+	if opts.Roots == nil {
+		opts.Roots = systemRootsPool()
+		if opts.Roots == nil {
+			return nil, SystemRootsError{systemRootsErr}
+		}
+	}
+
+	err = c.isValid(leafCertificate, nil, &opts)
+	if err != nil {
+		return
+	}
+
+	if len(opts.DNSName) > 0 {
+		err = c.VerifyHostname(opts.DNSName)
+		if err != nil {
+			return
+		}
+	}
+
+	var candidateChains [][]*Certificate
+	if opts.Roots.contains(c) {
+		candidateChains = append(candidateChains, []*Certificate{c})
+	} else {
+		if candidateChains, err = c.buildChains(nil, []*Certificate{c}, nil, &opts); err != nil {
+			return nil, err
+		}
+	}
+
+	keyUsages := opts.KeyUsages
+	if len(keyUsages) == 0 {
+		keyUsages = []ExtKeyUsage{ExtKeyUsageServerAuth}
+	}
+
+	// If any key usage is acceptable then we're done.
+	for _, usage := range keyUsages {
+		if usage == ExtKeyUsageAny {
+			return candidateChains, nil
+		}
+	}
+
+	for _, candidate := range candidateChains {
+		if checkChainForKeyUsage(candidate, keyUsages) {
+			chains = append(chains, candidate)
+		}
+	}
+
+	if len(chains) == 0 {
+		return nil, CertificateInvalidError{c, IncompatibleUsage, ""}
+	}
+
+	return chains, nil
+}
+
 func appendToFreshChain(chain []*Certificate, cert *Certificate) []*Certificate {
 	n := make([]*Certificate, len(chain)+1)
 	copy(n, chain)
@@ -710,58 +802,74 @@ func appendToFreshChain(chain []*Certificate, cert *Certificate) []*Certificate 
 	return n
 }
 
-func (c *Certificate) buildChains(cache map[int][][]*Certificate, currentChain []*Certificate, opts *VerifyOptions) (chains [][]*Certificate, err error) {
-	possibleRoots, failedRoot, rootErr := opts.Roots.findVerifiedParents(c)
-nextRoot:
-	for _, rootNum := range possibleRoots {
-		root := opts.Roots.certs[rootNum]
+// maxChainSignatureChecks is the maximum number of CheckSignatureFrom calls
+// that an invocation of buildChains will (tranistively) make. Most chains are
+// less than 15 certificates long, so this leaves space for multiple chains and
+// for failed checks due to different intermediates having the same Subject.
+const maxChainSignatureChecks = 100
 
+func (c *Certificate) buildChains(cache map[*Certificate][][]*Certificate, currentChain []*Certificate, sigChecks *int, opts *VerifyOptions) (chains [][]*Certificate, err error) {
+	var (
+		hintErr  error
+		hintCert *Certificate
+	)
+
+	considerCandidate := func(certType int, candidate *Certificate) {
 		for _, cert := range currentChain {
-			if cert.Equal(root) {
-				continue nextRoot
+			if cert.Equal(candidate) {
+				return
 			}
 		}
 
-		err = root.isValid(rootCertificate, currentChain, opts)
-		if err != nil {
-			continue
+		if sigChecks == nil {
+			sigChecks = new(int)
 		}
-		chains = append(chains, appendToFreshChain(currentChain, root))
+		*sigChecks++
+		if *sigChecks > maxChainSignatureChecks {
+			err = errors.New("x509: signature check attempts limit reached while verifying certificate chain")
+			return
+		}
+
+		if err := c.CheckSignatureFrom(candidate); err != nil {
+			if hintErr == nil {
+				hintErr = err
+				hintCert = candidate
+			}
+			return
+		}
+
+		err = candidate.isValid(certType, currentChain, opts)
+		if err != nil {
+			return
+		}
+
+		switch certType {
+		case rootCertificate:
+			chains = append(chains, appendToFreshChain(currentChain, candidate))
+		case intermediateCertificate:
+			if cache == nil {
+				cache = make(map[*Certificate][][]*Certificate)
+			}
+			childChains, ok := cache[candidate]
+			if !ok {
+				childChains, err = candidate.buildChains(cache, appendToFreshChain(currentChain, candidate), sigChecks, opts)
+				cache[candidate] = childChains
+			}
+			chains = append(chains, childChains...)
+		}
 	}
 
-	possibleIntermediates, failedIntermediate, intermediateErr := opts.Intermediates.findVerifiedParents(c)
-nextIntermediate:
-	for _, intermediateNum := range possibleIntermediates {
-		intermediate := opts.Intermediates.certs[intermediateNum]
-		for _, cert := range currentChain {
-			if cert.Equal(intermediate) {
-				continue nextIntermediate
-			}
-		}
-		err = intermediate.isValid(intermediateCertificate, currentChain, opts)
-		if err != nil {
-			continue
-		}
-		var childChains [][]*Certificate
-		childChains, ok := cache[intermediateNum]
-		if !ok {
-			childChains, err = intermediate.buildChains(cache, appendToFreshChain(currentChain, intermediate), opts)
-			cache[intermediateNum] = childChains
-		}
-		chains = append(chains, childChains...)
+	for _, rootNum := range opts.Roots.findPotentialParents(c) {
+		considerCandidate(rootCertificate, opts.Roots.certs[rootNum])
+	}
+	for _, intermediateNum := range opts.Intermediates.findPotentialParents(c) {
+		considerCandidate(intermediateCertificate, opts.Intermediates.certs[intermediateNum])
 	}
 
 	if len(chains) > 0 {
 		err = nil
 	}
-
 	if len(chains) == 0 && err == nil {
-		hintErr := rootErr
-		hintCert := failedRoot
-		if hintErr == nil {
-			hintErr = intermediateErr
-			hintCert = failedIntermediate
-		}
 		err = UnknownAuthorityError{c, hintErr, hintCert}
 	}
 
@@ -802,8 +910,8 @@ func validHostname(host string) bool {
 			if c == '-' && j != 0 {
 				continue
 			}
-			if c == '_' {
-				// _ is not a valid character in hostnames, but it's commonly
+			if c == '_' || c == ':' {
+				// Not valid characters in hostnames, but commonly
 				// found in deployments outside the WebPKI.
 				continue
 			}

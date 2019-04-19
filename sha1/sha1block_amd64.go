@@ -4,7 +4,7 @@
 
 package sha1
 
-import "golang.org/x/sys/cpu"
+import "internal/cpu"
 
 //go:noescape
 func blockAVX2(dig *digest, p []byte)

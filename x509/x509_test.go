@@ -6,11 +6,6 @@ package x509
 
 import (
 	"bytes"
-	"encoding/asn1"
-	"encoding/base64"
-	"encoding/hex"
-	"encoding/pem"
-	"fmt"
 	"github.com/insolar/x-crypto/dsa"
 	"github.com/insolar/x-crypto/ecdsa"
 	"github.com/insolar/x-crypto/elliptic"
@@ -19,6 +14,11 @@ import (
 	_ "github.com/insolar/x-crypto/sha256"
 	_ "github.com/insolar/x-crypto/sha512"
 	"github.com/insolar/x-crypto/x509/pkix"
+	"encoding/asn1"
+	"encoding/base64"
+	"encoding/hex"
+	"encoding/pem"
+	"fmt"
 	"internal/testenv"
 	"math/big"
 	"net"

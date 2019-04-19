@@ -5,12 +5,12 @@
 package x509
 
 import (
-	"encoding/asn1"
-	"errors"
-	"fmt"
 	"github.com/insolar/x-crypto/ecdsa"
 	"github.com/insolar/x-crypto/rsa"
 	"github.com/insolar/x-crypto/x509/pkix"
+	"encoding/asn1"
+	"errors"
+	"fmt"
 )
 
 // pkcs8 reflects an ASN.1, PKCS#8 PrivateKey. See
