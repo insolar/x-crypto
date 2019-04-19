@@ -54,62 +54,62 @@ func (curve p256Curve) Params() *CurveParams {
 // Functions implemented in p256_asm_*64.s
 // Montgomery multiplication modulo P256
 //go:noescape
-func p256MulX(res, in1, in2 []uint64)
+func p256Mul(res, in1, in2 []uint64)
 
 // Montgomery square modulo P256, repeated n times (n >= 1)
 //go:noescape
-func p256SqrX(res, in []uint64, n int)
+func p256Sqr(res, in []uint64, n int)
 
 // Montgomery multiplication by 1
 //go:noescape
-func p256FromMontX(res, in []uint64)
+func p256FromMont(res, in []uint64)
 
 // iff cond == 1  val <- -val
 //go:noescape
-func p256NegCondX(val []uint64, cond int)
+func p256NegCond(val []uint64, cond int)
 
 // if cond == 0 res <- b; else res <- a
 //go:noescape
-func p256MovCondX(res, a, b []uint64, cond int)
+func p256MovCond(res, a, b []uint64, cond int)
 
 // Endianness swap
 //go:noescape
-func p256BigToLittleX(res []uint64, in []byte)
+func p256BigToLittle(res []uint64, in []byte)
 
 //go:noescape
-func p256LittleToBigX(res []byte, in []uint64)
+func p256LittleToBig(res []byte, in []uint64)
 
 // Constant time table access
 //go:noescape
-func p256SelectX(point, table []uint64, idx int)
+func p256Select(point, table []uint64, idx int)
 
 //go:noescape
-func p256SelectBaseX(point, table []uint64, idx int)
+func p256SelectBase(point, table []uint64, idx int)
 
 // Montgomery multiplication modulo Ord(G)
 //go:noescape
-func p256OrdMulX(res, in1, in2 []uint64)
+func p256OrdMul(res, in1, in2 []uint64)
 
 // Montgomery square modulo Ord(G), repeated n times
 //go:noescape
-func p256OrdSqrX(res, in []uint64, n int)
+func p256OrdSqr(res, in []uint64, n int)
 
 // Point add with in2 being affine point
 // If sign == 1 -> in2 = -in2
 // If sel == 0 -> res = in1
 // if zero == 0 -> res = in2
 //go:noescape
-func p256PointAddAffineAsmX(res, in1, in2 []uint64, sign, sel, zero int)
+func p256PointAddAffineAsm(res, in1, in2 []uint64, sign, sel, zero int)
 
 // Point add. Returns one if the two input points were equal and zero
 // otherwise. (Note that, due to the way that the equations work out, some
 // representations of ∞ are considered equal to everything by this function.)
 //go:noescape
-func p256PointAddAsmX(res, in1, in2 []uint64) int
+func p256PointAddAsm(res, in1, in2 []uint64) int
 
 // Point double
 //go:noescape
-func p256PointDoubleAsmX(res, in []uint64)
+func p256PointDoubleAsm(res, in []uint64)
 
 func (curve p256Curve) Inverse(k *big.Int) *big.Int {
 	if k.Sign() < 0 {
@@ -145,30 +145,30 @@ func (curve p256Curve) Inverse(k *big.Int) *big.Int {
 	// i.e. converts x into the Montgomery domain.
 	// Window values borrowed from https://briansmith.org/ecc-inversion-addition-chains-01#p256_scalar_inversion
 	RR := []uint64{0x83244c95be79eea2, 0x4699799c49bd6fa6, 0x2845b2392b6bec59, 0x66e12d94f3d95620}
-	p256OrdMulX(_1, x, RR)      // _1
-	p256OrdSqrX(x, _1, 1)       // _10
-	p256OrdMulX(_11, x, _1)     // _11
-	p256OrdMulX(_101, x, _11)   // _101
-	p256OrdMulX(_111, x, _101)  // _111
-	p256OrdSqrX(x, _101, 1)     // _1010
-	p256OrdMulX(_1111, _101, x) // _1111
+	p256OrdMul(_1, x, RR)      // _1
+	p256OrdSqr(x, _1, 1)       // _10
+	p256OrdMul(_11, x, _1)     // _11
+	p256OrdMul(_101, x, _11)   // _101
+	p256OrdMul(_111, x, _101)  // _111
+	p256OrdSqr(x, _101, 1)     // _1010
+	p256OrdMul(_1111, _101, x) // _1111
 
-	p256OrdSqrX(t, x, 1)          // _10100
-	p256OrdMulX(_10101, t, _1)    // _10101
-	p256OrdSqrX(x, _10101, 1)     // _101010
-	p256OrdMulX(_101111, _101, x) // _101111
-	p256OrdMulX(x, _10101, x)     // _111111 = x6
-	p256OrdSqrX(t, x, 2)          // _11111100
-	p256OrdMulX(t, t, _11)        // _11111111 = x8
-	p256OrdSqrX(x, t, 8)          // _ff00
-	p256OrdMulX(x, x, t)          // _ffff = x16
-	p256OrdSqrX(t, x, 16)         // _ffff0000
-	p256OrdMulX(t, t, x)          // _ffffffff = x32
+	p256OrdSqr(t, x, 1)          // _10100
+	p256OrdMul(_10101, t, _1)    // _10101
+	p256OrdSqr(x, _10101, 1)     // _101010
+	p256OrdMul(_101111, _101, x) // _101111
+	p256OrdMul(x, _10101, x)     // _111111 = x6
+	p256OrdSqr(t, x, 2)          // _11111100
+	p256OrdMul(t, t, _11)        // _11111111 = x8
+	p256OrdSqr(x, t, 8)          // _ff00
+	p256OrdMul(x, x, t)          // _ffff = x16
+	p256OrdSqr(t, x, 16)         // _ffff0000
+	p256OrdMul(t, t, x)          // _ffffffff = x32
 
-	p256OrdSqrX(x, t, 64)
-	p256OrdMulX(x, x, t)
-	p256OrdSqrX(x, x, 32)
-	p256OrdMulX(x, x, t)
+	p256OrdSqr(x, t, 64)
+	p256OrdMul(x, x, t)
+	p256OrdSqr(x, x, 32)
+	p256OrdMul(x, x, t)
 
 	sqrs := []uint8{
 		6, 5, 4, 5, 5,
@@ -184,17 +184,17 @@ func (curve p256Curve) Inverse(k *big.Int) *big.Int {
 		_11, _11, _11, _1, _10101, _1111}
 
 	for i, s := range sqrs {
-		p256OrdSqrX(x, x, int(s))
-		p256OrdMulX(x, x, muls[i])
+		p256OrdSqr(x, x, int(s))
+		p256OrdMul(x, x, muls[i])
 	}
 
 	// Multiplying by one in the Montgomery domain converts a Montgomery
 	// value out of the domain.
 	one := []uint64{1, 0, 0, 0}
-	p256OrdMulX(x, x, one)
+	p256OrdMul(x, x, one)
 
 	xOut := make([]byte, 32)
-	p256LittleToBigX(xOut, x)
+	p256LittleToBig(xOut, x)
 	return new(big.Int).SetBytes(xOut)
 }
 
@@ -244,8 +244,8 @@ func (curve p256Curve) CombinedMult(bigX, bigY *big.Int, baseScalar, scalar []by
 	r2IsInfinity := scalarIsZero(scalarReversed)
 	fromBig(r2.xyz[0:4], maybeReduceModP(bigX))
 	fromBig(r2.xyz[4:8], maybeReduceModP(bigY))
-	p256MulX(r2.xyz[0:4], r2.xyz[0:4], rr[:])
-	p256MulX(r2.xyz[4:8], r2.xyz[4:8], rr[:])
+	p256Mul(r2.xyz[0:4], r2.xyz[0:4], rr[:])
+	p256Mul(r2.xyz[4:8], r2.xyz[4:8], rr[:])
 
 	// This sets r2's Z value to 1, in the Montgomery domain.
 	r2.xyz[8] = 0x0000000000000001
@@ -256,8 +256,8 @@ func (curve p256Curve) CombinedMult(bigX, bigY *big.Int, baseScalar, scalar []by
 	r2.p256ScalarMult(scalarReversed)
 
 	var sum, double p256Point
-	pointsEqual := p256PointAddAsmX(sum.xyz[:], r1.xyz[:], r2.xyz[:])
-	p256PointDoubleAsmX(double.xyz[:], r1.xyz[:])
+	pointsEqual := p256PointAddAsm(sum.xyz[:], r1.xyz[:], r2.xyz[:])
+	p256PointDoubleAsm(double.xyz[:], r1.xyz[:])
 	sum.CopyConditional(&double, pointsEqual)
 	sum.CopyConditional(&r1, r2IsInfinity)
 	sum.CopyConditional(&r2, r1IsInfinity)
@@ -281,8 +281,8 @@ func (curve p256Curve) ScalarMult(bigX, bigY *big.Int, scalar []byte) (x, y *big
 	var r p256Point
 	fromBig(r.xyz[0:4], maybeReduceModP(bigX))
 	fromBig(r.xyz[4:8], maybeReduceModP(bigY))
-	p256MulX(r.xyz[0:4], r.xyz[0:4], rr[:])
-	p256MulX(r.xyz[4:8], r.xyz[4:8], rr[:])
+	p256Mul(r.xyz[0:4], r.xyz[0:4], rr[:])
+	p256Mul(r.xyz[4:8], r.xyz[4:8], rr[:])
 	// This sets r2's Z value to 1, in the Montgomery domain.
 	r.xyz[8] = 0x0000000000000001
 	r.xyz[9] = 0xffffffff00000000
@@ -315,19 +315,19 @@ func (p *p256Point) p256PointToAffine() (x, y *big.Int) {
 	zInv := make([]uint64, 4)
 	zInvSq := make([]uint64, 4)
 	p256Inverse(zInv, p.xyz[8:12])
-	p256SqrX(zInvSq, zInv, 1)
-	p256MulX(zInv, zInv, zInvSq)
+	p256Sqr(zInvSq, zInv, 1)
+	p256Mul(zInv, zInv, zInvSq)
 
-	p256MulX(zInvSq, p.xyz[0:4], zInvSq)
-	p256MulX(zInv, p.xyz[4:8], zInv)
+	p256Mul(zInvSq, p.xyz[0:4], zInvSq)
+	p256Mul(zInv, p.xyz[4:8], zInv)
 
-	p256FromMontX(zInvSq, zInvSq)
-	p256FromMontX(zInv, zInv)
+	p256FromMont(zInvSq, zInvSq)
+	p256FromMont(zInv, zInv)
 
 	xOut := make([]byte, 32)
 	yOut := make([]byte, 32)
-	p256LittleToBigX(xOut, zInvSq)
-	p256LittleToBigX(yOut, zInv)
+	p256LittleToBig(xOut, zInvSq)
+	p256LittleToBig(yOut, zInv)
 
 	return new(big.Int).SetBytes(xOut), new(big.Int).SetBytes(yOut)
 }
@@ -352,44 +352,44 @@ func p256Inverse(out, in []uint64) {
 	p16 := stack[4*3 : 4*3+4]
 	p32 := stack[4*4 : 4*4+4]
 
-	p256SqrX(out, in, 1)
-	p256MulX(p2, out, in) // 3*p
+	p256Sqr(out, in, 1)
+	p256Mul(p2, out, in) // 3*p
 
-	p256SqrX(out, p2, 2)
-	p256MulX(p4, out, p2) // f*p
+	p256Sqr(out, p2, 2)
+	p256Mul(p4, out, p2) // f*p
 
-	p256SqrX(out, p4, 4)
-	p256MulX(p8, out, p4) // ff*p
+	p256Sqr(out, p4, 4)
+	p256Mul(p8, out, p4) // ff*p
 
-	p256SqrX(out, p8, 8)
-	p256MulX(p16, out, p8) // ffff*p
+	p256Sqr(out, p8, 8)
+	p256Mul(p16, out, p8) // ffff*p
 
-	p256SqrX(out, p16, 16)
-	p256MulX(p32, out, p16) // ffffffff*p
+	p256Sqr(out, p16, 16)
+	p256Mul(p32, out, p16) // ffffffff*p
 
-	p256SqrX(out, p32, 32)
-	p256MulX(out, out, in)
+	p256Sqr(out, p32, 32)
+	p256Mul(out, out, in)
 
-	p256SqrX(out, out, 128)
-	p256MulX(out, out, p32)
+	p256Sqr(out, out, 128)
+	p256Mul(out, out, p32)
 
-	p256SqrX(out, out, 32)
-	p256MulX(out, out, p32)
+	p256Sqr(out, out, 32)
+	p256Mul(out, out, p32)
 
-	p256SqrX(out, out, 16)
-	p256MulX(out, out, p16)
+	p256Sqr(out, out, 16)
+	p256Mul(out, out, p16)
 
-	p256SqrX(out, out, 8)
-	p256MulX(out, out, p8)
+	p256Sqr(out, out, 8)
+	p256Mul(out, out, p8)
 
-	p256SqrX(out, out, 4)
-	p256MulX(out, out, p4)
+	p256Sqr(out, out, 4)
+	p256Mul(out, out, p4)
 
-	p256SqrX(out, out, 2)
-	p256MulX(out, out, p2)
+	p256Sqr(out, out, 2)
+	p256Mul(out, out, p2)
 
-	p256SqrX(out, out, 2)
-	p256MulX(out, out, in)
+	p256Sqr(out, out, 2)
+	p256Mul(out, out, in)
 }
 
 func (p *p256Point) p256StorePoint(r *[16 * 4 * 3]uint64, index int) {
@@ -432,26 +432,26 @@ func initTable() {
 			// The window size is 6 so we need to double 6 times.
 			if i != 0 {
 				for k := 0; k < 6; k++ {
-					p256PointDoubleAsmX(t1, t1)
+					p256PointDoubleAsm(t1, t1)
 				}
 			}
 			// Convert the point to affine form. (Its values are
 			// still in Montgomery form however.)
 			p256Inverse(zInv, t1[8:12])
-			p256SqrX(zInvSq, zInv, 1)
-			p256MulX(zInv, zInv, zInvSq)
+			p256Sqr(zInvSq, zInv, 1)
+			p256Mul(zInv, zInv, zInvSq)
 
-			p256MulX(t1[:4], t1[:4], zInvSq)
-			p256MulX(t1[4:8], t1[4:8], zInv)
+			p256Mul(t1[:4], t1[:4], zInvSq)
+			p256Mul(t1[4:8], t1[4:8], zInv)
 
 			copy(t1[8:12], basePoint[8:12])
 			// Update the table entry
 			copy(p256Precomputed[i][j*8:], t1[:8])
 		}
 		if j == 0 {
-			p256PointDoubleAsmX(t2, basePoint)
+			p256PointDoubleAsm(t2, basePoint)
 		} else {
-			p256PointAddAsmX(t2, t2, basePoint)
+			p256PointAddAsm(t2, t2, basePoint)
 		}
 	}
 }
@@ -461,8 +461,8 @@ func (p *p256Point) p256BaseMult(scalar []uint64) {
 
 	wvalue := (scalar[0] << 1) & 0x7f
 	sel, sign := boothW6(uint(wvalue))
-	p256SelectBaseX(p.xyz[0:8], p256Precomputed[0][0:], sel)
-	p256NegCondX(p.xyz[4:8], sign)
+	p256SelectBase(p.xyz[0:8], p256Precomputed[0][0:], sel)
+	p256NegCond(p.xyz[4:8], sign)
 
 	// (This is one, in the Montgomery domain.)
 	p.xyz[8] = 0x0000000000000001
@@ -488,8 +488,8 @@ func (p *p256Point) p256BaseMult(scalar []uint64) {
 		}
 		index += 6
 		sel, sign = boothW6(uint(wvalue))
-		p256SelectBaseX(t0.xyz[0:8], p256Precomputed[i][0:], sel)
-		p256PointAddAffineAsmX(p.xyz[0:12], p.xyz[0:12], t0.xyz[0:8], sign, sel, zero)
+		p256SelectBase(t0.xyz[0:8], p256Precomputed[i][0:], sel)
+		p256PointAddAffineAsm(p.xyz[0:12], p.xyz[0:12], t0.xyz[0:8], sign, sel, zero)
 		zero |= sel
 	}
 }
@@ -503,39 +503,39 @@ func (p *p256Point) p256ScalarMult(scalar []uint64) {
 	// Prepare the table
 	p.p256StorePoint(&precomp, 0) // 1
 
-	p256PointDoubleAsmX(t0.xyz[:], p.xyz[:])
-	p256PointDoubleAsmX(t1.xyz[:], t0.xyz[:])
-	p256PointDoubleAsmX(t2.xyz[:], t1.xyz[:])
-	p256PointDoubleAsmX(t3.xyz[:], t2.xyz[:])
+	p256PointDoubleAsm(t0.xyz[:], p.xyz[:])
+	p256PointDoubleAsm(t1.xyz[:], t0.xyz[:])
+	p256PointDoubleAsm(t2.xyz[:], t1.xyz[:])
+	p256PointDoubleAsm(t3.xyz[:], t2.xyz[:])
 	t0.p256StorePoint(&precomp, 1)  // 2
 	t1.p256StorePoint(&precomp, 3)  // 4
 	t2.p256StorePoint(&precomp, 7)  // 8
 	t3.p256StorePoint(&precomp, 15) // 16
 
-	p256PointAddAsmX(t0.xyz[:], t0.xyz[:], p.xyz[:])
-	p256PointAddAsmX(t1.xyz[:], t1.xyz[:], p.xyz[:])
-	p256PointAddAsmX(t2.xyz[:], t2.xyz[:], p.xyz[:])
+	p256PointAddAsm(t0.xyz[:], t0.xyz[:], p.xyz[:])
+	p256PointAddAsm(t1.xyz[:], t1.xyz[:], p.xyz[:])
+	p256PointAddAsm(t2.xyz[:], t2.xyz[:], p.xyz[:])
 	t0.p256StorePoint(&precomp, 2) // 3
 	t1.p256StorePoint(&precomp, 4) // 5
 	t2.p256StorePoint(&precomp, 8) // 9
 
-	p256PointDoubleAsmX(t0.xyz[:], t0.xyz[:])
-	p256PointDoubleAsmX(t1.xyz[:], t1.xyz[:])
+	p256PointDoubleAsm(t0.xyz[:], t0.xyz[:])
+	p256PointDoubleAsm(t1.xyz[:], t1.xyz[:])
 	t0.p256StorePoint(&precomp, 5) // 6
 	t1.p256StorePoint(&precomp, 9) // 10
 
-	p256PointAddAsmX(t2.xyz[:], t0.xyz[:], p.xyz[:])
-	p256PointAddAsmX(t1.xyz[:], t1.xyz[:], p.xyz[:])
+	p256PointAddAsm(t2.xyz[:], t0.xyz[:], p.xyz[:])
+	p256PointAddAsm(t1.xyz[:], t1.xyz[:], p.xyz[:])
 	t2.p256StorePoint(&precomp, 6)  // 7
 	t1.p256StorePoint(&precomp, 10) // 11
 
-	p256PointDoubleAsmX(t0.xyz[:], t0.xyz[:])
-	p256PointDoubleAsmX(t2.xyz[:], t2.xyz[:])
+	p256PointDoubleAsm(t0.xyz[:], t0.xyz[:])
+	p256PointDoubleAsm(t2.xyz[:], t2.xyz[:])
 	t0.p256StorePoint(&precomp, 11) // 12
 	t2.p256StorePoint(&precomp, 13) // 14
 
-	p256PointAddAsmX(t0.xyz[:], t0.xyz[:], p.xyz[:])
-	p256PointAddAsmX(t2.xyz[:], t2.xyz[:], p.xyz[:])
+	p256PointAddAsm(t0.xyz[:], t0.xyz[:], p.xyz[:])
+	p256PointAddAsm(t2.xyz[:], t2.xyz[:], p.xyz[:])
 	t0.p256StorePoint(&precomp, 12) // 13
 	t2.p256StorePoint(&precomp, 14) // 15
 
@@ -546,16 +546,16 @@ func (p *p256Point) p256ScalarMult(scalar []uint64) {
 	wvalue := (scalar[index/64] >> (index % 64)) & 0x3f
 	sel, _ = boothW5(uint(wvalue))
 
-	p256SelectX(p.xyz[0:12], precomp[0:], sel)
+	p256Select(p.xyz[0:12], precomp[0:], sel)
 	zero := sel
 
 	for index > 4 {
 		index -= 5
-		p256PointDoubleAsmX(p.xyz[:], p.xyz[:])
-		p256PointDoubleAsmX(p.xyz[:], p.xyz[:])
-		p256PointDoubleAsmX(p.xyz[:], p.xyz[:])
-		p256PointDoubleAsmX(p.xyz[:], p.xyz[:])
-		p256PointDoubleAsmX(p.xyz[:], p.xyz[:])
+		p256PointDoubleAsm(p.xyz[:], p.xyz[:])
+		p256PointDoubleAsm(p.xyz[:], p.xyz[:])
+		p256PointDoubleAsm(p.xyz[:], p.xyz[:])
+		p256PointDoubleAsm(p.xyz[:], p.xyz[:])
+		p256PointDoubleAsm(p.xyz[:], p.xyz[:])
 
 		if index < 192 {
 			wvalue = ((scalar[index/64] >> (index % 64)) + (scalar[index/64+1] << (64 - (index % 64)))) & 0x3f
@@ -565,26 +565,26 @@ func (p *p256Point) p256ScalarMult(scalar []uint64) {
 
 		sel, sign = boothW5(uint(wvalue))
 
-		p256SelectX(t0.xyz[0:], precomp[0:], sel)
-		p256NegCondX(t0.xyz[4:8], sign)
-		p256PointAddAsmX(t1.xyz[:], p.xyz[:], t0.xyz[:])
-		p256MovCondX(t1.xyz[0:12], t1.xyz[0:12], p.xyz[0:12], sel)
-		p256MovCondX(p.xyz[0:12], t1.xyz[0:12], t0.xyz[0:12], zero)
+		p256Select(t0.xyz[0:], precomp[0:], sel)
+		p256NegCond(t0.xyz[4:8], sign)
+		p256PointAddAsm(t1.xyz[:], p.xyz[:], t0.xyz[:])
+		p256MovCond(t1.xyz[0:12], t1.xyz[0:12], p.xyz[0:12], sel)
+		p256MovCond(p.xyz[0:12], t1.xyz[0:12], t0.xyz[0:12], zero)
 		zero |= sel
 	}
 
-	p256PointDoubleAsmX(p.xyz[:], p.xyz[:])
-	p256PointDoubleAsmX(p.xyz[:], p.xyz[:])
-	p256PointDoubleAsmX(p.xyz[:], p.xyz[:])
-	p256PointDoubleAsmX(p.xyz[:], p.xyz[:])
-	p256PointDoubleAsmX(p.xyz[:], p.xyz[:])
+	p256PointDoubleAsm(p.xyz[:], p.xyz[:])
+	p256PointDoubleAsm(p.xyz[:], p.xyz[:])
+	p256PointDoubleAsm(p.xyz[:], p.xyz[:])
+	p256PointDoubleAsm(p.xyz[:], p.xyz[:])
+	p256PointDoubleAsm(p.xyz[:], p.xyz[:])
 
 	wvalue = (scalar[0] << 1) & 0x3f
 	sel, sign = boothW5(uint(wvalue))
 
-	p256SelectX(t0.xyz[0:], precomp[0:], sel)
-	p256NegCondX(t0.xyz[4:8], sign)
-	p256PointAddAsmX(t1.xyz[:], p.xyz[:], t0.xyz[:])
-	p256MovCondX(t1.xyz[0:12], t1.xyz[0:12], p.xyz[0:12], sel)
-	p256MovCondX(p.xyz[0:12], t1.xyz[0:12], t0.xyz[0:12], zero)
+	p256Select(t0.xyz[0:], precomp[0:], sel)
+	p256NegCond(t0.xyz[4:8], sign)
+	p256PointAddAsm(t1.xyz[:], p.xyz[:], t0.xyz[:])
+	p256MovCond(t1.xyz[0:12], t1.xyz[0:12], p.xyz[0:12], sel)
+	p256MovCond(p.xyz[0:12], t1.xyz[0:12], t0.xyz[0:12], zero)
 }
