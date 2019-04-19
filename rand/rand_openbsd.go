@@ -5,7 +5,7 @@
 package rand
 
 import (
-	"internal/syscall/unix"
+	"github.com/insolar/x-crypto/rand/unix"
 )
 
 func init() {
