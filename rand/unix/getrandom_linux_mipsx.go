@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package sha256
+// +build mips mipsle
 
-import "golang.org/x/sys/cpu"
+package unix
 
-var useAsm = cpu.S390X.HasSHA256
+// Linux getrandom system call number.
+// See GetRandom in getrandom_linux.go.
+const randomTrap uintptr = 4353

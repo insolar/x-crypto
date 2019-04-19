@@ -6,7 +6,7 @@ package rand_test
 
 import (
 	"bytes"
-	"github.com/insolar/x-crypto/rand"
+	"crypto/rand"
 	"fmt"
 	"io"
 	"math/big"

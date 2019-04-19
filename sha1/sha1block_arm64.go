@@ -4,7 +4,7 @@
 
 package sha1
 
-import "internal/cpu"
+import "golang.org/x/sys/cpu"
 
 var k = []uint32{
 	0x5A827999,

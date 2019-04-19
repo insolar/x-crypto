@@ -4,7 +4,7 @@
 
 package sha256
 
-import "internal/cpu"
+import "golang.org/x/sys/cpu"
 
 var k = _K
 
