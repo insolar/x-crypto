@@ -64,12 +64,12 @@ GLOBL p256ord<>(SB), 8, $32
 GLOBL p256one<>(SB), 8, $32
 
 /* ---------------------------------------*/
-// func p256LittleToBig(res []byte, in []uint64)
-TEXT ·p256LittleToBig(SB),NOSPLIT,$0
+// func p256LittleToBigX(res []byte, in []uint64)
+TEXT ·p256LittleToBigX(SB),NOSPLIT,$0
 	JMP	·p256BigToLittle(SB)
 /* ---------------------------------------*/
 // func p256BigToLittle(res []uint64, in []byte)
-TEXT ·p256BigToLittle(SB),NOSPLIT,$0
+TEXT ·p256BigToLittleX(SB),NOSPLIT,$0
 	MOVD	res+0(FP), res_ptr
 	MOVD	in+24(FP), a_ptr
 
@@ -87,7 +87,7 @@ TEXT ·p256BigToLittle(SB),NOSPLIT,$0
 /* ---------------------------------------*/
 // func p256MovCond(res, a, b []uint64, cond int)
 // If cond == 0 res=b, else res=a
-TEXT ·p256MovCond(SB),NOSPLIT,$0
+TEXT ·p256MovCondX(SB),NOSPLIT,$0
 	MOVD	res+0(FP), res_ptr
 	MOVD	a+24(FP), a_ptr
 	MOVD	b+48(FP), b_ptr
@@ -132,7 +132,7 @@ TEXT ·p256MovCond(SB),NOSPLIT,$0
 	RET
 /* ---------------------------------------*/
 // func p256NegCond(val []uint64, cond int)
-TEXT ·p256NegCond(SB),NOSPLIT,$0
+TEXT ·p256NegCondX(SB),NOSPLIT,$0
 	MOVD	val+0(FP), a_ptr
 	MOVD	cond+24(FP), hlp0
 	MOVD	a_ptr, res_ptr
@@ -162,7 +162,7 @@ TEXT ·p256NegCond(SB),NOSPLIT,$0
 	RET
 /* ---------------------------------------*/
 // func p256Sqr(res, in []uint64, n int)
-TEXT ·p256Sqr(SB),NOSPLIT,$0
+TEXT ·p256SqrX(SB),NOSPLIT,$0
 	MOVD	res+0(FP), res_ptr
 	MOVD	in+24(FP), a_ptr
 	MOVD	n+48(FP), b_ptr
@@ -175,7 +175,7 @@ TEXT ·p256Sqr(SB),NOSPLIT,$0
 
 sqrLoop:
 	SUB	$1, b_ptr
-	CALL	p256SqrInternal<>(SB)
+	CALL	p256SqrInternalX<>(SB)
 	MOVD	y0, x0
 	MOVD	y1, x1
 	MOVD	y2, x2
@@ -187,7 +187,7 @@ sqrLoop:
 	RET
 /* ---------------------------------------*/
 // func p256Mul(res, in1, in2 []uint64)
-TEXT ·p256Mul(SB),NOSPLIT,$0
+TEXT ·p256MulX(SB),NOSPLIT,$0
 	MOVD	res+0(FP), res_ptr
 	MOVD	in1+24(FP), a_ptr
 	MOVD	in2+48(FP), b_ptr
@@ -201,14 +201,14 @@ TEXT ·p256Mul(SB),NOSPLIT,$0
 	LDP	0*16(b_ptr), (y0, y1)
 	LDP	1*16(b_ptr), (y2, y3)
 
-	CALL	p256MulInternal<>(SB)
+	CALL	p256MulInternalX<>(SB)
 
 	STP	(y0, y1), 0*16(res_ptr)
 	STP	(y2, y3), 1*16(res_ptr)
 	RET
 /* ---------------------------------------*/
 // func p256FromMont(res, in []uint64)
-TEXT ·p256FromMont(SB),NOSPLIT,$0
+TEXT ·p256FromMontX(SB),NOSPLIT,$0
 	MOVD	res+0(FP), res_ptr
 	MOVD	in+24(FP), a_ptr
 
@@ -270,7 +270,7 @@ TEXT ·p256FromMont(SB),NOSPLIT,$0
 // Indexed from 1 to 15, with -1 offset
 // (index 0 is implicitly point at infinity)
 // func p256Select(point, table []uint64, idx int)
-TEXT ·p256Select(SB),NOSPLIT,$0
+TEXT ·p256SelectX(SB),NOSPLIT,$0
 	MOVD	idx+48(FP), const0
 	MOVD	table+24(FP), b_ptr
 	MOVD	point+0(FP), res_ptr
@@ -325,7 +325,7 @@ loop_select:
 /* ---------------------------------------*/
 // Constant time point access to base point table.
 // func p256SelectBase(point, table []uint64, idx int)
-TEXT ·p256SelectBase(SB),NOSPLIT,$0
+TEXT ·p256SelectBaseX(SB),NOSPLIT,$0
 	MOVD	idx+48(FP), t0
 	MOVD	table+24(FP), t1
 	MOVD	point+0(FP), res_ptr
@@ -366,8 +366,8 @@ loop_select:
 	STP	(y2, y3), 3*16(res_ptr)
 	RET
 /* ---------------------------------------*/
-// func p256OrdSqr(res, in []uint64, n int)
-TEXT ·p256OrdSqr(SB),NOSPLIT,$0
+// func p256OrdSqrX(res, in []uint64, n int)
+TEXT ·p256OrdSqrX(SB),NOSPLIT,$0
 	MOVD	in+24(FP), a_ptr
 	MOVD	n+48(FP), b_ptr
 
@@ -566,7 +566,7 @@ ordSqrLoop:
 	RET
 /* ---------------------------------------*/
 // func p256OrdMul(res, in1, in2 []uint64)
-TEXT ·p256OrdMul(SB),NOSPLIT,$0
+TEXT ·p256OrdMulX(SB),NOSPLIT,$0
 	MOVD	in1+24(FP), a_ptr
 	MOVD	in2+48(FP), b_ptr
 
@@ -785,7 +785,7 @@ TEXT ·p256OrdMul(SB),NOSPLIT,$0
 
 	RET
 /* ---------------------------------------*/
-TEXT p256SubInternal<>(SB),NOSPLIT,$0
+TEXT p256SubInternalX<>(SB),NOSPLIT,$0
 	SUBS	x0, y0, acc0
 	SBCS	x1, y1, acc1
 	SBCS	x2, y2, acc2
@@ -805,7 +805,7 @@ TEXT p256SubInternal<>(SB),NOSPLIT,$0
 
 	RET
 /* ---------------------------------------*/
-TEXT p256SqrInternal<>(SB),NOSPLIT,$0
+TEXT p256SqrInternalX<>(SB),NOSPLIT,$0
 	// x[1:] * x[0]
 	MUL	x0, x1, acc1
 	UMULH	x0, x1, acc2
@@ -914,7 +914,7 @@ TEXT p256SqrInternal<>(SB),NOSPLIT,$0
 	CSEL	CS, t3, acc3, y3
 	RET
 /* ---------------------------------------*/
-TEXT p256MulInternal<>(SB),NOSPLIT,$0
+TEXT p256MulInternalX<>(SB),NOSPLIT,$0
 	// y[0] * x
 	MUL	y0, x0, acc0
 	UMULH	y0, x0, acc1
@@ -1092,7 +1092,7 @@ TEXT p256MulInternal<>(SB),NOSPLIT,$0
 #define u2(off) (32*11 + 8 + off)(RSP)
 
 // func p256PointAddAffineAsm(res, in1, in2 []uint64, sign, sel, zero int)
-TEXT ·p256PointAddAffineAsm(SB),0,$264-96
+TEXT ·p256PointAddAffineAsmX(SB),0,$264-96
 	MOVD	in1+24(FP), a_ptr
 	MOVD	in2+48(FP), b_ptr
 	MOVD	sign+72(FP), hlp0
@@ -1141,18 +1141,18 @@ TEXT ·p256PointAddAffineAsm(SB),0,$264-96
 	STy(y2in)
 	// Begin point add
 	LDx(z1in)
-	CALL	p256SqrInternal<>(SB)    // z1ˆ2
+	CALL	p256SqrInternalX<>(SB)    // z1ˆ2
 	STy(z1sqr)
 
 	LDx(x2in)
-	CALL	p256MulInternal<>(SB)    // x2 * z1ˆ2
+	CALL	p256MulInternalX<>(SB)    // x2 * z1ˆ2
 
 	LDx(x1in)
-	CALL	p256SubInternal<>(SB)    // h = u2 - u1
+	CALL	p256SubInternalX<>(SB)    // h = u2 - u1
 	STx(h)
 
 	LDy(z1in)
-	CALL	p256MulInternal<>(SB)    // z3 = h * z1
+	CALL	p256MulInternalX<>(SB)    // z3 = h * z1
 
 	LDP	4*16(a_ptr), (acc0, acc1)// iff select[0] == 0, z3 = z1
 	LDP	5*16(a_ptr), (acc2, acc3)
@@ -1174,49 +1174,49 @@ TEXT ·p256PointAddAffineAsm(SB),0,$264-96
 	STP	(y2, y3), 5*16(t0)
 
 	LDy(z1sqr)
-	CALL	p256MulInternal<>(SB)    // z1 ^ 3
+	CALL	p256MulInternalX<>(SB)    // z1 ^ 3
 
 	LDx(y2in)
-	CALL	p256MulInternal<>(SB)    // s2 = y2 * z1ˆ3
+	CALL	p256MulInternalX<>(SB)    // s2 = y2 * z1ˆ3
 	STy(s2)
 
 	LDx(y1in)
-	CALL	p256SubInternal<>(SB)    // r = s2 - s1
+	CALL	p256SubInternalX<>(SB)    // r = s2 - s1
 	STx(r)
 
-	CALL	p256SqrInternal<>(SB)    // rsqr = rˆ2
+	CALL	p256SqrInternalX<>(SB)    // rsqr = rˆ2
 	STy	(rsqr)
 
 	LDx(h)
-	CALL	p256SqrInternal<>(SB)    // hsqr = hˆ2
+	CALL	p256SqrInternalX<>(SB)    // hsqr = hˆ2
 	STy(hsqr)
 
-	CALL	p256MulInternal<>(SB)    // hcub = hˆ3
+	CALL	p256MulInternalX<>(SB)    // hcub = hˆ3
 	STy(hcub)
 
 	LDx(y1in)
-	CALL	p256MulInternal<>(SB)    // y1 * hˆ3
+	CALL	p256MulInternalX<>(SB)    // y1 * hˆ3
 	STy(s2)
 
 	LDP	hsqr(0*8), (x0, x1)
 	LDP	hsqr(2*8), (x2, x3)
 	LDP	0*16(a_ptr), (y0, y1)
 	LDP	1*16(a_ptr), (y2, y3)
-	CALL	p256MulInternal<>(SB)    // u1 * hˆ2
+	CALL	p256MulInternalX<>(SB)    // u1 * hˆ2
 	STP	(y0, y1), h(0*8)
 	STP	(y2, y3), h(2*8)
 
 	p256MulBy2Inline               // u1 * hˆ2 * 2, inline
 
 	LDy(rsqr)
-	CALL	p256SubInternal<>(SB)    // rˆ2 - u1 * hˆ2 * 2
+	CALL	p256SubInternalX<>(SB)    // rˆ2 - u1 * hˆ2 * 2
 
 	MOVD	x0, y0
 	MOVD	x1, y1
 	MOVD	x2, y2
 	MOVD	x3, y3
 	LDx(hcub)
-	CALL	p256SubInternal<>(SB)
+	CALL	p256SubInternalX<>(SB)
 
 	LDP	0*16(a_ptr), (acc0, acc1)
 	LDP	1*16(a_ptr), (acc2, acc3)
@@ -1238,15 +1238,15 @@ TEXT ·p256PointAddAffineAsm(SB),0,$264-96
 
 	LDP	h(0*8), (y0, y1)
 	LDP	h(2*8), (y2, y3)
-	CALL	p256SubInternal<>(SB)
+	CALL	p256SubInternalX<>(SB)
 
 	LDP	r(0*8), (y0, y1)
 	LDP	r(2*8), (y2, y3)
-	CALL	p256MulInternal<>(SB)
+	CALL	p256MulInternalX<>(SB)
 
 	LDP	s2(0*8), (x0, x1)
 	LDP	s2(2*8), (x2, x3)
-	CALL	p256SubInternal<>(SB)
+	CALL	p256SubInternalX<>(SB)
 	LDP	2*16(a_ptr), (acc0, acc1)
 	LDP	3*16(a_ptr), (acc2, acc3)
 	ANDS	$1, hlp1, ZR           // iff select[0] == 0, y3 = y1
@@ -1289,7 +1289,7 @@ TEXT ·p256PointAddAffineAsm(SB),0,$264-96
 #define tmp(off)  (32*3 + 8 + off)(RSP)
 
 //func p256PointDoubleAsm(res, in []uint64)
-TEXT ·p256PointDoubleAsm(SB),NOSPLIT,$136-48
+TEXT ·p256PointDoubleAsmX(SB),NOSPLIT,$136-48
 	MOVD	res+0(FP), res_ptr
 	MOVD	in+24(FP), a_ptr
 
@@ -1299,7 +1299,7 @@ TEXT ·p256PointDoubleAsm(SB),NOSPLIT,$136-48
 	// Begin point double
 	LDP	4*16(a_ptr), (x0, x1)
 	LDP	5*16(a_ptr), (x2, x3)
-	CALL	p256SqrInternal<>(SB)
+	CALL	p256SqrInternalX<>(SB)
 	STP	(y0, y1), zsqr(0*8)
 	STP	(y2, y3), zsqr(2*8)
 
@@ -1310,15 +1310,15 @@ TEXT ·p256PointDoubleAsm(SB),NOSPLIT,$136-48
 
 	LDx(z1in)
 	LDy(y1in)
-	CALL	p256MulInternal<>(SB)
+	CALL	p256MulInternalX<>(SB)
 	p256MulBy2Inline
 	STx(z3out)
 
 	LDy(x1in)
 	LDx(zsqr)
-	CALL	p256SubInternal<>(SB)
+	CALL	p256SubInternalX<>(SB)
 	LDy(m)
-	CALL	p256MulInternal<>(SB)
+	CALL	p256MulInternalX<>(SB)
 
 	// Multiply by 3
 	p256MulBy2Inline
@@ -1327,13 +1327,13 @@ TEXT ·p256PointDoubleAsm(SB),NOSPLIT,$136-48
 
 	LDy(y1in)
 	p256MulBy2Inline
-	CALL	p256SqrInternal<>(SB)
+	CALL	p256SqrInternalX<>(SB)
 	STy(s)
 	MOVD	y0, x0
 	MOVD	y1, x1
 	MOVD	y2, x2
 	MOVD	y3, x3
-	CALL	p256SqrInternal<>(SB)
+	CALL	p256SqrInternalX<>(SB)
 
 	// Divide by 2
 	ADDS	$-1, y0, t0
@@ -1357,26 +1357,26 @@ TEXT ·p256PointDoubleAsm(SB),NOSPLIT,$136-48
 
 	LDx(x1in)
 	LDy(s)
-	CALL	p256MulInternal<>(SB)
+	CALL	p256MulInternalX<>(SB)
 	STy(s)
 	p256MulBy2Inline
 	STx(tmp)
 
 	LDx(m)
-	CALL	p256SqrInternal<>(SB)
+	CALL	p256SqrInternalX<>(SB)
 	LDx(tmp)
-	CALL	p256SubInternal<>(SB)
+	CALL	p256SubInternalX<>(SB)
 
 	STx(x3out)
 
 	LDy(s)
-	CALL	p256SubInternal<>(SB)
+	CALL	p256SubInternalX<>(SB)
 
 	LDy(m)
-	CALL	p256MulInternal<>(SB)
+	CALL	p256MulInternalX<>(SB)
 
 	LDx(y3out)
-	CALL	p256SubInternal<>(SB)
+	CALL	p256SubInternalX<>(SB)
 	STx(y3out)
 	RET
 /* ---------------------------------------*/
@@ -1389,7 +1389,7 @@ TEXT ·p256PointDoubleAsm(SB),NOSPLIT,$136-48
 #define y3out(off) (off + 32)(b_ptr)
 #define z3out(off) (off + 64)(b_ptr)
 //func p256PointAddAsm(res, in1, in2 []uint64) int
-TEXT ·p256PointAddAsm(SB),0,$392-80
+TEXT ·p256PointAddAsmX(SB),0,$392-80
 	// See https://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian-3.html#addition-add-2007-bl
 	// Move input to stack in order to free registers
 	MOVD	in1+24(FP), a_ptr
@@ -1400,26 +1400,26 @@ TEXT ·p256PointAddAsm(SB),0,$392-80
 
 	// Begin point add
 	LDx(z2in)
-	CALL	p256SqrInternal<>(SB)    // z2^2
+	CALL	p256SqrInternalX<>(SB)    // z2^2
 	STy(z2sqr)
 
-	CALL	p256MulInternal<>(SB)    // z2^3
+	CALL	p256MulInternalX<>(SB)    // z2^3
 
 	LDx(y1in)
-	CALL	p256MulInternal<>(SB)    // s1 = z2ˆ3*y1
+	CALL	p256MulInternalX<>(SB)    // s1 = z2ˆ3*y1
 	STy(s1)
 
 	LDx(z1in)
-	CALL	p256SqrInternal<>(SB)    // z1^2
+	CALL	p256SqrInternalX<>(SB)    // z1^2
 	STy(z1sqr)
 
-	CALL	p256MulInternal<>(SB)    // z1^3
+	CALL	p256MulInternalX<>(SB)    // z1^3
 
 	LDx(y2in)
-	CALL	p256MulInternal<>(SB)    // s2 = z1ˆ3*y2
+	CALL	p256MulInternalX<>(SB)    // s2 = z1ˆ3*y2
 
 	LDx(s1)
-	CALL	p256SubInternal<>(SB)    // r = s2 - s1
+	CALL	p256SubInternalX<>(SB)    // r = s2 - s1
 	STx(r)
 
 	MOVD	$1, t2
@@ -1441,16 +1441,16 @@ TEXT ·p256PointAddAsm(SB),0,$392-80
 
 	LDx(z2sqr)
 	LDy(x1in)
-	CALL	p256MulInternal<>(SB)    // u1 = x1 * z2ˆ2
+	CALL	p256MulInternalX<>(SB)    // u1 = x1 * z2ˆ2
 	STy(u1)
 
 	LDx(z1sqr)
 	LDy(x2in)
-	CALL	p256MulInternal<>(SB)    // u2 = x2 * z1ˆ2
+	CALL	p256MulInternalX<>(SB)    // u2 = x2 * z1ˆ2
 	STy(u2)
 
 	LDx(u1)
-	CALL	p256SubInternal<>(SB)    // h = u2 - u1
+	CALL	p256SubInternalX<>(SB)    // h = u2 - u1
 	STx(h)
 
 	MOVD	$1, t2
@@ -1473,54 +1473,54 @@ TEXT ·p256PointAddAsm(SB),0,$392-80
 	AND	hlp0, hlp1, hlp1
 
 	LDx(r)
-	CALL	p256SqrInternal<>(SB)    // rsqr = rˆ2
+	CALL	p256SqrInternalX<>(SB)    // rsqr = rˆ2
 	STy(rsqr)
 
 	LDx(h)
-	CALL	p256SqrInternal<>(SB)    // hsqr = hˆ2
+	CALL	p256SqrInternalX<>(SB)    // hsqr = hˆ2
 	STy(hsqr)
 
 	LDx(h)
-	CALL	p256MulInternal<>(SB)    // hcub = hˆ3
+	CALL	p256MulInternalX<>(SB)    // hcub = hˆ3
 	STy(hcub)
 
 	LDx(s1)
-	CALL	p256MulInternal<>(SB)
+	CALL	p256MulInternalX<>(SB)
 	STy(s2)
 
 	LDx(z1in)
 	LDy(z2in)
-	CALL	p256MulInternal<>(SB)    // z1 * z2
+	CALL	p256MulInternalX<>(SB)    // z1 * z2
 	LDx(h)
-	CALL	p256MulInternal<>(SB)    // z1 * z2 * h
+	CALL	p256MulInternalX<>(SB)    // z1 * z2 * h
 	MOVD	res+0(FP), b_ptr
 	STy(z3out)
 
 	LDx(hsqr)
 	LDy(u1)
-	CALL	p256MulInternal<>(SB)    // hˆ2 * u1
+	CALL	p256MulInternalX<>(SB)    // hˆ2 * u1
 	STy(u2)
 
 	p256MulBy2Inline               // u1 * hˆ2 * 2, inline
 	LDy(rsqr)
-	CALL	p256SubInternal<>(SB)    // rˆ2 - u1 * hˆ2 * 2
+	CALL	p256SubInternalX<>(SB)    // rˆ2 - u1 * hˆ2 * 2
 
 	MOVD	x0, y0
 	MOVD	x1, y1
 	MOVD	x2, y2
 	MOVD	x3, y3
 	LDx(hcub)
-	CALL	p256SubInternal<>(SB)
+	CALL	p256SubInternalX<>(SB)
 	STx(x3out)
 
 	LDy(u2)
-	CALL	p256SubInternal<>(SB)
+	CALL	p256SubInternalX<>(SB)
 
 	LDy(r)
-	CALL	p256MulInternal<>(SB)
+	CALL	p256MulInternalX<>(SB)
 
 	LDx(s2)
-	CALL	p256SubInternal<>(SB)
+	CALL	p256SubInternalX<>(SB)
 	STx(y3out)
 
 	MOVD	hlp1, R0
