@@ -66,9 +66,9 @@ GLOBL p256one<>(SB), 8, $32
 /* ---------------------------------------*/
 // func p256LittleToBigX(res []byte, in []uint64)
 TEXT ·p256LittleToBigX(SB),NOSPLIT,$0
-	JMP	·p256BigToLittle(SB)
+	JMP	·p256BigToLittleX(SB)
 /* ---------------------------------------*/
-// func p256BigToLittle(res []uint64, in []byte)
+// func p256BigToLittleX(res []uint64, in []byte)
 TEXT ·p256BigToLittleX(SB),NOSPLIT,$0
 	MOVD	res+0(FP), res_ptr
 	MOVD	in+24(FP), a_ptr
