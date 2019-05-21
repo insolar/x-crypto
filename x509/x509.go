@@ -507,7 +507,7 @@ func namedCurveFromOID(oid asn1.ObjectIdentifier) elliptic.Curve {
 	case oid.Equal(oidNamedCurveP521):
 		return elliptic.P521()
 	case oid.Equal(oidNamedCurveSecp256k1):
-		return elliptic.Secp256k1()
+		return elliptic.P256K()
 	}
 	return nil
 }
@@ -522,7 +522,7 @@ func oidFromNamedCurve(curve elliptic.Curve) (asn1.ObjectIdentifier, bool) {
 		return oidNamedCurveP384, true
 	case elliptic.P521():
 		return oidNamedCurveP521, true
-	case elliptic.Secp256k1():
+	case elliptic.P256K():
 		return oidNamedCurveSecp256k1, true
 	}
 

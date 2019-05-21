@@ -14,7 +14,7 @@ import (
 
 func TestOnCurve(t *testing.T) {
 	for _, curve := range [...]Curve{
-		P224(), P256(), P384(), P521(), Secp256k1(),
+		P224(), P256(), P384(), P521(), P256K(),
 	} {
 		curveParams := curve.Params()
 		t.Logf("Testing G is on curve %v", curveParams.Name)
@@ -568,7 +568,7 @@ func TestBaseMult(t *testing.T) {
 	}
 	for _, tt := range []curveBaseMultTest{
 		{P224(), p224BaseMultTests},
-		{Secp256k1(), secp256k1BaseMultTests},
+		{P256K(), secp256k1BaseMultTests},
 	} {
 		name := tt.curve.Params().Name
 		for i, e := range tt.cases {
