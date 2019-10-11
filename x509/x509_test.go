@@ -19,7 +19,7 @@ import (
 	_ "github.com/insolar/x-crypto/sha256"
 	_ "github.com/insolar/x-crypto/sha512"
 	"github.com/insolar/x-crypto/x509/pkix"
-	"internal/testenv"
+	"github.com/insolar/x-crypto/internal/testenv"
 	"math/big"
 	"net"
 	"net/url"
